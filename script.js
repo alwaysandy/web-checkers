@@ -45,17 +45,25 @@ function createCheckerBoard(board) {
     return board;
 }
 
+function placeChecker(board, x, y, colour) {
+    let checker = document.createElement('div')
+    checker.classList.add('checker');
+    if (colour == 'red') {
+        checker.classList.add('red-checker');
+    } else {
+        checker.classList.add('black-checker')
+    }
+    
+    checker.dataset.x = x;
+    checker.dataset.y = y;
+    board[y][x].appendChild(checker);
+}
+
 function placeCheckers(board) {
     for (let y = 0; y < 3; y++) {
         for (let x = 0; x < 8; x++) {
             if (board[y][x].classList.contains('black')) {
-                const checker = document.createElement('div');
-                checker.classList.add('black-checker');
-                checker.classList.add('checker');
-                checker.dataset.x = x;
-                checker.dataset.y = y;
-
-                board[y][x].appendChild(checker);
+                placeChecker(board, x, y, 'black')
             }
         }
     }
@@ -63,13 +71,7 @@ function placeCheckers(board) {
     for (let y = 5; y < 8; y++) {
         for (let x = 0; x < 8; x++) {
             if (board[y][x].classList.contains('black')) {
-                const checker = document.createElement('div');
-                checker.classList.add('red-checker');
-                checker.classList.add('checker');
-                checker.dataset.x = x;
-                checker.dataset.y = y;
-
-                board[y][x].appendChild(checker);
+                placeChecker(board, x, y, 'red');
             }
         }
     }
@@ -205,24 +207,38 @@ function checkForJumps(board, colour) {
         checkers.forEach((checker) => {
             let x = parseInt(checker.dataset.x);
             let y = parseInt(checker.dataset.y);
-            if (y + 2 < 8) {
-                if (x + 2 < 8) {
-                    if (!board[y + 2][x + 2].hasChildNodes() &&
-                    getCheckerColour(board[y + 1][x + 1]) == 'red') {
-                        board[y][x].firstChild.classList.add('selectable');
-                        mustJump = true;
-                    }
-                }
+            // if (y + 2 < 8) {
+            //     if (x + 2 < 8) {
+            //         if (!board[y + 2][x + 2].hasChildNodes() &&
+            //         getCheckerColour(board[y + 1][x + 1]) == 'red') {
+            //             board[y][x].firstChild.classList.add('selectable');
+            //             mustJump = true;
+            //         }
+            //     }
                 
-                if (x - 2 >= 0) {
-                    if (!board[y + 2][x - 2].hasChildNodes() &&
-                    getCheckerColour(board[y + 1][x - 1]) == 'red') {
-                        board[y][x].firstChild.classList.add('selectable');
-                        mustJump = true;
-                    }
-                }
-            }
+            //     if (x - 2 >= 0) {
+            //         if (!board[y + 2][x - 2].hasChildNodes() &&
+            //         getCheckerColour(board[y + 1][x - 1]) == 'red') {
+            //             board[y][x].firstChild.classList.add('selectable');
+            //             mustJump = true;
+            //         }
+            //     }
+            // }
+            checkForJump(board, x, y, -2, 2, 'black');
+            checkForJump(board, x, y, -2, 2, 'black');
         });
+    }
+}
+
+function checkForJump(board, x, y, dirX, dirY, colour) {
+    if (y + dirY < 8 && y + dirY >= 0) {
+        if (x + dirX < 8 && x + dirX >= 0) {
+            if (!board[y + dirY][x + dirX].hasChildNodes() &&
+            getCheckerColour(board[y + (dirY / 2)][x + (dirX / 2)]) != colour) {
+                board[y][x].firstChild.classList.add('selectable');
+                mustJump = true;
+            }
+        }
     }
 }
 
@@ -342,10 +358,14 @@ function startGame() {
     let board = createBoardArray();
     board = createCheckerBoard(board);
     placeCheckers(board);
+    //placeChecker(board, 2, 7, 'red');
+    //placeChecker(board, 2, 5, 'black');
+    //placeChecker(board, 1, 4, 'black');
     addEventListeners(board);
 }
 
-let turn = 'red';
+let turn = 'black';
 let mustJump = false;
 
 startGame();
+test
