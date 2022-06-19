@@ -226,7 +226,8 @@ function clearSelectable() {
     }
 }
 
-function checkForDoubleJump() {
+function checkForDoubleJump(board, t) {
+    highlightAllowedJumps(board, t);
     return document.querySelectorAll('.highlighted').length > 0;
 }
 
@@ -242,6 +243,12 @@ function removeJumpedPiece(board, t) {
     board[rY][rX].removeChild(board[rY][rX].firstChild);
 }
 
+function kingMe(board, x, y) {
+    const king = document.createElement('div');
+    king.classList.add('king');
+    board[y][x].firstChild.appendChild(king);
+}
+
 function movePiece(board, t) {
     const selected = document.querySelector('.selected').firstChild;
     let x = t.dataset.x;
@@ -249,6 +256,14 @@ function movePiece(board, t) {
     selected.dataset.x = x;
     selected.dataset.y = y;
     board[y][x].appendChild(selected);
+
+    let colour = getCheckerColour(board[y][x]);
+    console.log(colour, y);
+    if (colour == 'black' && y == 7) {
+        kingMe(board, x, y);
+     } else if (colour == 'red' && y == 0) {
+         kingMe(board, x, y);
+     }
 }
 
 function addEventListeners(board) {
@@ -266,21 +281,16 @@ function addEventListeners(board) {
                     movePiece(board, t.target);
                     unselectTarget();
                     unhighlightMoves();
-                    highlightAllowedJumps(board, t.target);
-                    if (checkForDoubleJump()) {
+                    if (checkForDoubleJump(board, t.target)) {
                         mustJump = true;
                         selectTarget(t);
                     }
-                    // Check if any are highlighted after highlight allowed jumps
-                    //checkForDoubleJump();
-                    // Re-selectable t.target
-                    // mustjump true
-                    //checkForJumps(board, turn);
                 } else {
                     movePiece(board, t.target);
                     unselectTarget();
                     unhighlightMoves();
                 }
+                // Only run this in case there's no double jump
                 if (!mustJump) {
                     turn = turn == 'red' ? 'black' : 'red';
                     checkForJumps(board, turn);
