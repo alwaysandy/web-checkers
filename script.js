@@ -184,23 +184,25 @@ function checkForJumps(board, colour) {
         checkers.forEach((checker) => {
             let x = parseInt(checker.dataset.x);
             let y = parseInt(checker.dataset.y);
-            if (y - 2 >= 0) {
-                if (x + 2 < 8) {
-                    if (!board[y - 2][x + 2].hasChildNodes() &&
-                    getCheckerColour(board[y - 1][x + 1]) == 'black') {
-                        board[y][x].firstChild.classList.add('selectable');
-                        mustJump = true;
-                    }
-                }
+            // if (y - 2 >= 0) {
+            //     if (x + 2 < 8) {
+            //         if (!board[y - 2][x + 2].hasChildNodes() &&
+            //         getCheckerColour(board[y - 1][x + 1]) == 'black') {
+            //             board[y][x].firstChild.classList.add('selectable');
+            //             mustJump = true;
+            //         }
+            //     }
                 
-                if (x - 2 >= 0) {
-                    if (!board[y - 2][x - 2].hasChildNodes() &&
-                    getCheckerColour(board[y - 1][x - 1]) == 'black') {
-                        board[y][x].firstChild.classList.add('selectable');
-                        mustJump = true;
-                    }
-                }
-            }
+            //     if (x - 2 >= 0) {
+            //         if (!board[y - 2][x - 2].hasChildNodes() &&
+            //         getCheckerColour(board[y - 1][x - 1]) == 'black') {
+            //             board[y][x].firstChild.classList.add('selectable');
+            //             mustJump = true;
+            //         }
+            //     }
+            // }
+            checkForJump(board, x, y, 2, -2, 'red');
+            checkForJump(board, x, y, -2, -2, 'red');
         });
     } else if (colour == 'black') {
         const checkers = document.querySelectorAll('.black-checker');
@@ -225,7 +227,7 @@ function checkForJumps(board, colour) {
             //     }
             // }
             checkForJump(board, x, y, -2, 2, 'black');
-            checkForJump(board, x, y, -2, 2, 'black');
+            checkForJump(board, x, y, 2, 2, 'black');
         });
     }
 }
@@ -233,10 +235,15 @@ function checkForJumps(board, colour) {
 function checkForJump(board, x, y, dirX, dirY, colour) {
     if (y + dirY < 8 && y + dirY >= 0) {
         if (x + dirX < 8 && x + dirX >= 0) {
-            if (!board[y + dirY][x + dirX].hasChildNodes() &&
-            getCheckerColour(board[y + (dirY / 2)][x + (dirX / 2)]) != colour) {
-                board[y][x].firstChild.classList.add('selectable');
-                mustJump = true;
+            if (!board[y + dirY][x + dirX].hasChildNodes())
+            {
+                if ((colour == 'red' && 
+                getCheckerColour(board[y + (dirY / 2)][x + (dirX / 2)]) == 'black') || (colour == 'black' && 
+                getCheckerColour(board[y + (dirY / 2)][x + (dirX / 2)]) == 'red'))
+                {
+                    board[y][x].firstChild.classList.add('selectable');
+                    mustJump = true;
+                }
             }
         }
     }
@@ -331,6 +338,7 @@ function addEventListeners(board) {
                     checkForJumps(board, turn);
                 }
             } else if (colour) {
+                console.log(mustJump);
                 if (!mustJump) {
                     if ((turn == 'red' && colour == 'red') ||
                     (turn == 'black' && colour == 'black')) {
@@ -341,8 +349,8 @@ function addEventListeners(board) {
                     }
                 } else {
                     if (isSelectable(t.target) && 
-                    (turn == 'red' && colour == 'red') ||
-                    (turn == 'black' && colour == 'black')) {
+                    ((turn == 'red' && colour == 'red') ||
+                    (turn == 'black' && colour == 'black'))) {
                         unselectTarget();
                         selectTarget(t);
                         unhighlightMoves();
@@ -364,8 +372,7 @@ function startGame() {
     addEventListeners(board);
 }
 
-let turn = 'black';
+let turn = 'red';
 let mustJump = false;
 
 startGame();
-test
