@@ -61,6 +61,6 @@ div.red-checker {
 }
 
 .tile.highlighted {
-    border-color: white;
-    border-width: 2px;
+    border-color: lime;
+    border-width: 3px;
 }
