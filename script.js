@@ -182,57 +182,21 @@ function checkForJumps(board, colour) {
     if (colour == 'red') {
         const checkers = document.querySelectorAll('.red-checker');
         checkers.forEach((checker) => {
-            let x = parseInt(checker.dataset.x);
-            let y = parseInt(checker.dataset.y);
-            // if (y - 2 >= 0) {
-            //     if (x + 2 < 8) {
-            //         if (!board[y - 2][x + 2].hasChildNodes() &&
-            //         getCheckerColour(board[y - 1][x + 1]) == 'black') {
-            //             board[y][x].firstChild.classList.add('selectable');
-            //             mustJump = true;
-            //         }
-            //     }
-                
-            //     if (x - 2 >= 0) {
-            //         if (!board[y - 2][x - 2].hasChildNodes() &&
-            //         getCheckerColour(board[y - 1][x - 1]) == 'black') {
-            //             board[y][x].firstChild.classList.add('selectable');
-            //             mustJump = true;
-            //         }
-            //     }
-            // }
-            checkForJump(board, x, y, 2, -2, 'red');
-            checkForJump(board, x, y, -2, -2, 'red');
+            checkForJump(board, checker, 2, -2, 'red');
+            checkForJump(board, checker, -2, -2, 'red');
         });
     } else if (colour == 'black') {
         const checkers = document.querySelectorAll('.black-checker');
         checkers.forEach((checker) => {
-            let x = parseInt(checker.dataset.x);
-            let y = parseInt(checker.dataset.y);
-            // if (y + 2 < 8) {
-            //     if (x + 2 < 8) {
-            //         if (!board[y + 2][x + 2].hasChildNodes() &&
-            //         getCheckerColour(board[y + 1][x + 1]) == 'red') {
-            //             board[y][x].firstChild.classList.add('selectable');
-            //             mustJump = true;
-            //         }
-            //     }
-                
-            //     if (x - 2 >= 0) {
-            //         if (!board[y + 2][x - 2].hasChildNodes() &&
-            //         getCheckerColour(board[y + 1][x - 1]) == 'red') {
-            //             board[y][x].firstChild.classList.add('selectable');
-            //             mustJump = true;
-            //         }
-            //     }
-            // }
-            checkForJump(board, x, y, -2, 2, 'black');
-            checkForJump(board, x, y, 2, 2, 'black');
+            checkForJump(board, checker, -2, 2, 'black');
+            checkForJump(board, checker, 2, 2, 'black');
         });
     }
 }
 
-function checkForJump(board, x, y, dirX, dirY, colour) {
+function checkForJump(board, checker, dirX, dirY, colour) {
+    let x = parseInt(checker.dataset.x);
+    let y = parseInt(checker.dataset.y);
     if (y + dirY < 8 && y + dirY >= 0) {
         if (x + dirX < 8 && x + dirX >= 0) {
             if (!board[y + dirY][x + dirX].hasChildNodes())
@@ -338,7 +302,6 @@ function addEventListeners(board) {
                     checkForJumps(board, turn);
                 }
             } else if (colour) {
-                console.log(mustJump);
                 if (!mustJump) {
                     if ((turn == 'red' && colour == 'red') ||
                     (turn == 'black' && colour == 'black')) {
