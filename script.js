@@ -101,39 +101,34 @@ function unhighlightMoves() {
     }
 }
 
-
-// REMOVE JUMP CHECK FROM HERE
 function highlightAllowedMoves(board, t) {
     let x = parseInt(t.target.dataset.x);
     let y = parseInt(t.target.dataset.y);
     let color = getCheckerColour(board[y][x]);
     let king = board[y][x].firstChild.hasChildNodes() ? true : false;
     if (color == 'black') {
-        if ((y + 1) < 8) {
-            if (x + 1 < 8) {
-                if (!board[y + 1][x + 1].hasChildNodes()) {
-                    board[y + 1][x + 1].classList.add('highlighted');
-                }
-            }
-            
-            if (x - 1 >= 0) {
-                if (!board[y + 1][x - 1].hasChildNodes()) {
-                    board[y + 1][x - 1].classList.add('highlighted');
-                }
-            }
+        if (moveAllowed(board, x, y, 1, 1)) {
+            board[y + 1][x + 1].classList.add('highlighted');
+        }
+        if (moveAllowed(board, x, y, -1, 1)) {
+            board[y + 1][x - 1].classList.add('highlighted');
         }
     } else if (color == 'red') {
-        if ((y - 1) >= 0) {
-            if ((x + 1) < 8) {
-                if (!board[y - 1][x + 1].hasChildNodes()) {
-                    board[y - 1][x + 1].classList.add('highlighted');
-                }
-            }
-            
-            if ((x - 1) >= 0) {
-                if (!board[y - 1][x - 1].hasChildNodes()) {
-                    board[y - 1][x - 1].classList.add('highlighted');
-                }
+
+        if (moveAllowed(board, x, y, 1, -1)) {
+            board[y - 1][x + 1].classList.add('highlighted');
+        }
+        if (moveAllowed(board, x, y, -1, -1)) {
+            board[y - 1][x - 1].classList.add('highlighted');
+        }
+    }
+}
+
+function moveAllowed(board, x, y, dirX, dirY) {
+    if (y + dirY < 8 && y + dirY >= 0) {
+        if (x + dirX < 8 && x + dirX >= 0) {
+            if (!board[y + dirY][x + dirX].hasChildNodes()) {
+                return true;
             }
         }
     }
