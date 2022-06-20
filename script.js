@@ -140,6 +140,7 @@ function highlightAllowedJumps(board, t) {
     let x = parseInt(t.dataset.x);
     let y = parseInt(t.dataset.y);
     let colour = getCheckerColour(board[y][x]);
+    let king = board[y][x].firstChild.classList.contains('king');
     if (colour == 'red') {
         if (checkForJump(board, x, y, 2, -2, 'red')) {
             board[y - 2][x + 2].classList.add('highlighted');
@@ -147,12 +148,29 @@ function highlightAllowedJumps(board, t) {
         if (checkForJump(board, x, y, -2, -2, 'red')) {
             board[y - 2][x - 2].classList.add('highlighted');
         }
+        if (king) {
+            if (checkForJump(board, x, y, 2, 2, 'red')) {
+                board[y + 2][x + 2].classList.add('highlighted');
+            }
+            if (checkForJump(board, x, y, -2, 2, 'red')) {
+                board[y + 2][x - 2].classList.add('highlighted');
+            }
+        }
     } else if (colour == 'black') {
         if (checkForJump(board, x, y, 2, 2, 'black')) {
             board[y + 2][x + 2].classList.add('highlighted');
         }
         if (checkForJump(board, x, y, -2, 2, 'black')) {
             board[y + 2][x - 2].classList.add('highlighted');
+        }
+        
+        if (king) {
+            if (checkForJump(board, x, y, 2, -2, 'black')) {
+                board[y - 2][x + 2].classList.add('highlighted');
+            }
+            if (checkForJump(board, x, y, -2, -2, 'black')) {
+                board[y - 2][x - 2].classList.add('highlighted');
+            }
         }
     }
 }
@@ -163,10 +181,19 @@ function checkForJumps(board, colour) {
         checkers.forEach((checker) => {
             let x = parseInt(checker.dataset.x);
             let y = parseInt(checker.dataset.y);
+            let king = board[y][x].firstChild.classList.contains('king');
             if (checkForJump(board, x, y, 2, -2, 'red') ||
             checkForJump(board, x, y, -2, -2, 'red')) {
                 board[y][x].firstChild.classList.add('selectable');
                 mustJump = true;
+            }
+
+            if (king) {
+                if (checkForJump(board, x, y, -2, 2, 'red') ||
+                checkForJump(board, x, y, 2, 2, 'red')) {
+                    board[y][x].firstChild.classList.add('selectable');
+                    mustJump = true;
+                }
             }
         });
     } else if (colour == 'black') {
@@ -174,10 +201,19 @@ function checkForJumps(board, colour) {
         checkers.forEach((checker) => {
             let x = parseInt(checker.dataset.x);
             let y = parseInt(checker.dataset.y);
+            let king = board[y][x].firstChild.classList.contains('king');
             if (checkForJump(board, x, y, -2, 2, 'black') ||
             checkForJump(board, x, y, 2, 2, 'black')) {
                 board[y][x].firstChild.classList.add('selectable');
                 mustJump = true;
+            }
+
+            if (king) {
+                if (checkForJump(board, x, y, 2, -2, 'black') ||
+                checkForJump(board, x, y, -2, -2, 'black')) {
+                    board[y][x].firstChild.classList.add('selectable');
+                    mustJump = true;
+                }
             }
         });
     }
