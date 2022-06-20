@@ -105,16 +105,18 @@ function highlightAllowedMoves(board, t) {
     let x = parseInt(t.target.dataset.x);
     let y = parseInt(t.target.dataset.y);
     let color = getCheckerColour(board[y][x]);
-    let king = board[y][x].firstChild.hasChildNodes() ? true : false;
-    if (color == 'black') {
+    let king = board[y][x].firstChild.classList.contains('king');
+    
+    if (color == 'black' || king == true) {
         if (moveAllowed(board, x, y, 1, 1)) {
             board[y + 1][x + 1].classList.add('highlighted');
         }
         if (moveAllowed(board, x, y, -1, 1)) {
             board[y + 1][x - 1].classList.add('highlighted');
         }
-    } else if (color == 'red') {
-
+    }
+    
+    if (color == 'red' || king == true) {
         if (moveAllowed(board, x, y, 1, -1)) {
             board[y - 1][x + 1].classList.add('highlighted');
         }
@@ -244,9 +246,7 @@ function removeJumpedPiece(board, t) {
 }
 
 function kingMe(board, x, y) {
-    const king = document.createElement('div');
-    king.classList.add('king');
-    board[y][x].firstChild.appendChild(king);
+    board[y][x].firstChild.classList.add('king');
 }
 
 function movePiece(board, t) {

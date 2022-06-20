@@ -65,8 +65,6 @@ div.red-checker {
     border-width: 3px;
 }
 
-.king {
-    width: 5px;
-    height: 5px;
-    background-color: orange;
+div.king.checker {
+    border: 2px solid orange;
 }
