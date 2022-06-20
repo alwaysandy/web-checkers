@@ -294,7 +294,6 @@ function movePiece(board, t) {
     board[y][x].appendChild(selected);
 
     let colour = getCheckerColour(board[y][x]);
-    console.log(colour, y);
     if (colour == 'black' && y == 7) {
         kingMe(board, x, y);
      } else if (colour == 'red' && y == 0) {
@@ -358,14 +357,18 @@ function addEventListeners(board) {
 function startGame() {
     let board = createBoardArray();
     board = createCheckerBoard(board);
-    //placeCheckers(board);
-    placeChecker(board, 2, 7, 'red');
-    placeChecker(board, 2, 5, 'black');
-    placeChecker(board, 1, 4, 'black');
+    placeCheckers(board);
+    // placeChecker(board, 0, 7, 'red');
+    // placeChecker(board, 1, 6, 'black');
+    // placeChecker(board, 3, 6, 'black');
+    // placeChecker(board, 5, 6, 'black');
+    // board[7][0].firstChild.classList.add('king');
+    // board[7][0].firstChild.classList.add('selectable')
+    // board[6][3].firstChild.classList.add('king');
     addEventListeners(board);
 }
 
-let turn = 'black';
+let turn = 'red';
 let mustJump = false;
 
 startGame();
