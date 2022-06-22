@@ -129,7 +129,7 @@ function highlightAllowedMoves(Board, t) {
     let x = parseInt(t.target.dataset.x);
     let y = parseInt(t.target.dataset.y);
     let color = getCheckerColour(x, y);
-    let king = Board[y][x].firstChild.classList.contains('king');
+    let king = Checkers[y][x].king;
     
     if (color == 'black' || king) {
         if (moveAllowed(Board, x, y, 1, 1)) {
@@ -164,7 +164,7 @@ function highlightAllowedJumps(Board, t) {
     let x = parseInt(t.dataset.x);
     let y = parseInt(t.dataset.y);
     let colour = getCheckerColour(x, y);
-    let king = Board[y][x].firstChild.classList.contains('king');
+    let king = Checkers[y][x].king;
     if (colour == 'red' || king) {
         if (checkForJump(Board, x, y, 2, -2, colour)) {
             Board[y - 2][x + 2].classList.add('highlighted');
@@ -196,7 +196,7 @@ function checkForJumps(Board) {
     checkers.forEach((checker) => {
         let x = parseInt(checker.dataset.x);
         let y = parseInt(checker.dataset.y);
-        let king = Board[y][x].firstChild.classList.contains('king');
+        let king = Checkers[y][x].king;
 
         if (colour == "red" || king) {
             if (checkForJump(Board, x, y, 2, -2, colour) ||
@@ -278,6 +278,7 @@ function removeJumpedPiece(Board, t) {
 
 function kingMe(Board, x, y) {
     Board[y][x].firstChild.classList.add('king');
+    Checkers[y][x].king = true;
     justKinged = true;
 }
 
@@ -358,19 +359,21 @@ function addEventListeners(Board) {
 function startGame() {
     const Board = createBoardArray();
     createCheckerBoard(Board);
-    placeCheckers(Board);
-    // placeChecker(Board, 0, 7, 'red');
-    // placeChecker(Board, 1, 6, 'black');
-    // placeChecker(Board, 3, 6, 'black');
-    // placeChecker(Board, 5, 6, 'black');
-    // Board[7][0].firstChild.classList.add('king');
-    // Board[7][0].firstChild.classList.add('ableToJump')
-    // Board[6][3].firstChild.classList.add('king');
+    // placeCheckers(Board);
+    placeChecker(Board, 0, 7, 'red');
+    placeChecker(Board, 1, 6, 'black');
+    placeChecker(Board, 3, 6, 'black');
+    placeChecker(Board, 5, 6, 'black');
+    Board[7][0].firstChild.classList.add('king');
+    Checkers[7][0].king = true;
+    Board[7][0].firstChild.classList.add('ableToJump')
+    Board[6][3].firstChild.classList.add('king');
+    Checkers[6][3].king = true;
     addEventListeners(Board);
 }
 
 let turn = 'red';
-let mustJump = false;
+let mustJump = true;
 let justKinged = false;
 const Checkers = createCheckersArray();
 
