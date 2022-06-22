@@ -185,17 +185,21 @@ function highlightAllowedJumps(Board, t) {
 }
 
 function checkForJumps(Board) {
-    let checkers;
+    let checkers = [];
     let colour = turn;
-    if (colour == 'red') {
-        checkers = document.querySelectorAll('.red-checker');
-    } else if (colour == 'black') {
-        checkers = document.querySelectorAll('.black-checker');
+    for (let y = 0; y < 8; y++) {
+        for (let x = 0; x < 8; x++) {
+            if (Checkers[y][x]) {
+                if (Checkers[y][x].colour == colour) {
+                    checkers.push([x, y]);
+                }
+            }
+        }
     }
     
     checkers.forEach((checker) => {
-        let x = parseInt(checker.dataset.x);
-        let y = parseInt(checker.dataset.y);
+        let x = checker[0];
+        let y = checker[1];
         let king = Checkers[y][x].king;
 
         if (colour == "red" || king) {
@@ -218,11 +222,12 @@ function checkForJumps(Board) {
 function checkForJump(Board, x, y, dirX, dirY, colour) {
     if (y + dirY < 8 && y + dirY >= 0) {
         if (x + dirX < 8 && x + dirX >= 0) {
-            if (!Board[y + dirY][x + dirX].hasChildNodes())
+            if (Checkers[y + dirY][x + dirX] == 0)
             {
                 if ((colour == 'red' && 
-                getCheckerColour((x + (dirX / 2)), (y + (dirY / 2))) == 'black') || (colour == 'black' && 
-                getCheckerColour((x + (dirX / 2)), (y + (dirY / 2))) == 'red'))
+                Checkers[y + (dirY / 2)][x + (dirX / 2)].colour == 'black') || 
+                (colour == 'black' && 
+                Checkers[y + (dirY / 2)][x + (dirX / 2)] == 'red'))
                 {
                     return true;
                 }
