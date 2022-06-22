@@ -149,6 +149,7 @@ function highlightAllowedJumps(board, t) {
             board[y - 2][x - 2].classList.add('highlighted');
         }
     }
+    
     if (colour == 'black' || king) {
         if (checkForJump(board, x, y, 2, 2, colour)) {
             board[y + 2][x + 2].classList.add('highlighted');
