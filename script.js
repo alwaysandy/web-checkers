@@ -278,6 +278,7 @@ function removeJumpedPiece(board, t) {
 
 function kingMe(board, x, y) {
     board[y][x].firstChild.classList.add('king');
+    justKinged = true;
 }
 
 function movePiece(board, t) {
@@ -291,10 +292,8 @@ function movePiece(board, t) {
     let colour = getCheckerColour(board[y][x]);
     if (colour == 'black' && y == 7) {
         kingMe(board, x, y);
-        justKinged = true;
      } else if (colour == 'red' && y == 0) {
          kingMe(board, x, y);
-         justKinged = true;
      }
 }
 
