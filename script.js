@@ -2,15 +2,37 @@
 // Add king support
 
 function createBoardArray() {
-    const board = [];
+    // This is where all the game tile dom elements are saved
+    const Board = [];
     for (let i = 0; i < 8; i++) {
-        board.push([]);
+        Board.push([]);
     }
 
-    return board;
+    return Board;
 }
 
-function createCheckerBoard(board) {
+function createCheckersArray() {
+    // This array will keep track of checkers on Board
+    const checkers = [];
+    for (let i = 0; i < 8; i++) {
+        checkers.push([]);
+        for (let j = 0; j < 8; j++) {
+            checkers[i].push(0);
+        }
+    }
+
+    return checkers;
+}
+
+function createChecker() {
+    return {
+        colour: "",
+        king: false,
+        ableToJump: false,
+    };
+}
+
+function createCheckerBoard(Board) {
     const boardDiv = document.querySelector('#board-div');
     for (let y = 0; y < 8; y++) {
         const line = document.createElement('div');
@@ -35,17 +57,15 @@ function createCheckerBoard(board) {
                 }
             }
 
-            board[y].push(tile);
+            Board[y].push(tile);
             line.appendChild(tile);
         }
 
         boardDiv.appendChild(line);
     }
-
-    return board;
 }
 
-function placeChecker(board, x, y, colour) {
+function placeChecker(Board, x, y, colour) {
     let checker = document.createElement('div')
     checker.classList.add('checker');
     if (colour == 'red') {
@@ -56,22 +76,28 @@ function placeChecker(board, x, y, colour) {
     
     checker.dataset.x = x;
     checker.dataset.y = y;
-    board[y][x].appendChild(checker);
+    Board[y][x].appendChild(checker);
 }
 
-function placeCheckers(board) {
+function placeCheckers(Board) {
     for (let y = 0; y < 3; y++) {
         for (let x = 0; x < 8; x++) {
-            if (board[y][x].classList.contains('black')) {
-                placeChecker(board, x, y, 'black')
+            if (Board[y][x].classList.contains('black')) {
+                placeChecker(Board, x, y, 'black')
+                let checker = createChecker();
+                checker.colour = "black";
+                Checkers[y][x] = checker;
             }
         }
     }
 
     for (let y = 5; y < 8; y++) {
         for (let x = 0; x < 8; x++) {
-            if (board[y][x].classList.contains('black')) {
-                placeChecker(board, x, y, 'red');
+            if (Board[y][x].classList.contains('black')) {
+                placeChecker(Board, x, y, 'red');
+                let checker = createChecker();
+                checker.colour = "red";
+                Checkers[y][x] = checker;
             }
         }
     }
@@ -101,66 +127,66 @@ function unhighlightMoves() {
     }
 }
 
-function highlightAllowedMoves(board, t) {
+function highlightAllowedMoves(Board, t) {
     let x = parseInt(t.target.dataset.x);
     let y = parseInt(t.target.dataset.y);
-    let color = getCheckerColour(board[y][x]);
-    let king = board[y][x].firstChild.classList.contains('king');
+    let color = getCheckerColour(x, y);
+    let king = Board[y][x].firstChild.classList.contains('king');
     
     if (color == 'black' || king) {
-        if (moveAllowed(board, x, y, 1, 1)) {
-            board[y + 1][x + 1].classList.add('highlighted');
+        if (moveAllowed(Board, x, y, 1, 1)) {
+            Board[y + 1][x + 1].classList.add('highlighted');
         }
-        if (moveAllowed(board, x, y, -1, 1)) {
-            board[y + 1][x - 1].classList.add('highlighted');
+        if (moveAllowed(Board, x, y, -1, 1)) {
+            Board[y + 1][x - 1].classList.add('highlighted');
         }
     }
     
     if (color == 'red' || king) {
-        if (moveAllowed(board, x, y, 1, -1)) {
-            board[y - 1][x + 1].classList.add('highlighted');
+        if (moveAllowed(Board, x, y, 1, -1)) {
+            Board[y - 1][x + 1].classList.add('highlighted');
         }
-        if (moveAllowed(board, x, y, -1, -1)) {
-            board[y - 1][x - 1].classList.add('highlighted');
+        if (moveAllowed(Board, x, y, -1, -1)) {
+            Board[y - 1][x - 1].classList.add('highlighted');
         }
     }
 }
 
-function moveAllowed(board, x, y, dirX, dirY) {
+function moveAllowed(Board, x, y, dirX, dirY) {
     if (y + dirY < 8 && y + dirY >= 0) {
         if (x + dirX < 8 && x + dirX >= 0) {
-            if (!board[y + dirY][x + dirX].hasChildNodes()) {
+            if (!Board[y + dirY][x + dirX].hasChildNodes()) {
                 return true;
             }
         }
     }
 }
 
-function highlightAllowedJumps(board, t) {
+function highlightAllowedJumps(Board, t) {
     let x = parseInt(t.dataset.x);
     let y = parseInt(t.dataset.y);
-    let colour = getCheckerColour(board[y][x]);
-    let king = board[y][x].firstChild.classList.contains('king');
+    let colour = getCheckerColour(x, y);
+    let king = Board[y][x].firstChild.classList.contains('king');
     if (colour == 'red' || king) {
-        if (checkForJump(board, x, y, 2, -2, colour)) {
-            board[y - 2][x + 2].classList.add('highlighted');
+        if (checkForJump(Board, x, y, 2, -2, colour)) {
+            Board[y - 2][x + 2].classList.add('highlighted');
         }
-        if (checkForJump(board, x, y, -2, -2, colour)) {
-            board[y - 2][x - 2].classList.add('highlighted');
+        if (checkForJump(Board, x, y, -2, -2, colour)) {
+            Board[y - 2][x - 2].classList.add('highlighted');
         }
     }
-    
+
     if (colour == 'black' || king) {
-        if (checkForJump(board, x, y, 2, 2, colour)) {
-            board[y + 2][x + 2].classList.add('highlighted');
+        if (checkForJump(Board, x, y, 2, 2, colour)) {
+            Board[y + 2][x + 2].classList.add('highlighted');
         }
-        if (checkForJump(board, x, y, -2, 2, colour)) {
-            board[y + 2][x - 2].classList.add('highlighted');
+        if (checkForJump(Board, x, y, -2, 2, colour)) {
+            Board[y + 2][x - 2].classList.add('highlighted');
         }
     }
 }
 
-function checkForJumps(board) {
+function checkForJumps(Board) {
     let checkers;
     let colour = turn;
     if (colour == 'red') {
@@ -172,33 +198,33 @@ function checkForJumps(board) {
     checkers.forEach((checker) => {
         let x = parseInt(checker.dataset.x);
         let y = parseInt(checker.dataset.y);
-        let king = board[y][x].firstChild.classList.contains('king');
+        let king = Board[y][x].firstChild.classList.contains('king');
 
         if (colour == "red" || king) {
-            if (checkForJump(board, x, y, 2, -2, colour) ||
-            checkForJump(board, x, y, -2, -2, colour)) {
-                board[y][x].firstChild.classList.add('ableToJump');
+            if (checkForJump(Board, x, y, 2, -2, colour) ||
+            checkForJump(Board, x, y, -2, -2, colour)) {
+                Board[y][x].firstChild.classList.add('ableToJump');
                 mustJump = true;
             }
         }
         if (colour == "black" || king) {
-            if (checkForJump(board, x, y, -2, 2, colour) ||
-            checkForJump(board, x, y, 2, 2, colour)) {
-                board[y][x].firstChild.classList.add('ableToJump');
+            if (checkForJump(Board, x, y, -2, 2, colour) ||
+            checkForJump(Board, x, y, 2, 2, colour)) {
+                Board[y][x].firstChild.classList.add('ableToJump');
                 mustJump = true;
             }
         }
     });
 }
 
-function checkForJump(board, x, y, dirX, dirY, colour) {
+function checkForJump(Board, x, y, dirX, dirY, colour) {
     if (y + dirY < 8 && y + dirY >= 0) {
         if (x + dirX < 8 && x + dirX >= 0) {
-            if (!board[y + dirY][x + dirX].hasChildNodes())
+            if (!Board[y + dirY][x + dirX].hasChildNodes())
             {
                 if ((colour == 'red' && 
-                getCheckerColour(board[y + (dirY / 2)][x + (dirX / 2)]) == 'black') || (colour == 'black' && 
-                getCheckerColour(board[y + (dirY / 2)][x + (dirX / 2)]) == 'red'))
+                getCheckerColour((x + (dirX / 2)), (y + (dirY / 2))) == 'black') || (colour == 'black' && 
+                getCheckerColour((x + (dirX / 2)), (y + (dirY / 2))) == 'red'))
                 {
                     return true;
                 }
@@ -207,11 +233,9 @@ function checkForJump(board, x, y, dirX, dirY, colour) {
     }
 }
 
-function getCheckerColour(t) {
-    if (t.classList.contains('checker')) {
-        return t.classList.contains('red-checker') ? 'red' : 'black';
-    } else if (t.hasChildNodes()) {
-        return t.firstChild.classList.contains('red-checker') ? 'red' : 'black';
+function getCheckerColour(x, y) {
+    if (Checkers[y][x]) {
+        return Checkers[y][x].colour;
     }
 
     return false;
@@ -236,12 +260,12 @@ function clearAbleToJump() {
     }
 }
 
-function checkForDoubleJump(board, t) {
-    highlightAllowedJumps(board, t);
+function checkForDoubleJump(Board, t) {
+    highlightAllowedJumps(Board, t);
     return document.querySelectorAll('.highlighted').length > 0;
 }
 
-function removeJumpedPiece(board, t) {
+function removeJumpedPiece(Board, t) {
     let oldSpace = document.querySelector('.selected');
     let oldX = parseInt(oldSpace.dataset.x);
     let oldY = parseInt(oldSpace.dataset.y);
@@ -250,47 +274,54 @@ function removeJumpedPiece(board, t) {
 
     let rX = (oldX + newX) / 2;
     let rY = (oldY + newY) / 2;
-    board[rY][rX].removeChild(board[rY][rX].firstChild);
+    Board[rY][rX].removeChild(Board[rY][rX].firstChild);
+    Checkers[rY][rX] = 0;
 }
 
-function kingMe(board, x, y) {
-    board[y][x].firstChild.classList.add('king');
+function kingMe(Board, x, y) {
+    Board[y][x].firstChild.classList.add('king');
     justKinged = true;
 }
 
-function movePiece(board, t) {
+function movePiece(Board, t) {
     const selected = document.querySelector('.selected').firstChild;
     let x = t.dataset.x;
     let y = t.dataset.y;
+    let oldX = selected.dataset.x;
+    let oldY = selected.dataset.y;
     selected.dataset.x = x;
     selected.dataset.y = y;
-    board[y][x].appendChild(selected);
+    Board[y][x].appendChild(selected);
+    let movedPiece = Checkers[oldY][oldX];
+    Checkers[oldY][oldX] = 0;
+    Checkers[y][x] = movedPiece;
 
-    let colour = getCheckerColour(board[y][x]);
+    let colour = getCheckerColour(x, y);
     if ((colour == 'black' && y == 7) ||
     (colour == 'red' && y == 0)) {
-         kingMe(board, x, y);
+         kingMe(Board, x, y);
      }
 }
 
-function addEventListeners(board) {
+function addEventListeners(Board) {
     const tiles = document.querySelectorAll('.tile');
     tiles.forEach((tile) => {
         tile.addEventListener('click', (t) => {
             // REWRITE ME
             // HELL PILE OF CODE THAT SOMEHOW WORKS
-
-            colour = getCheckerColour(t.target)
+            let x = t.target.dataset.x;
+            let y = t.target.dataset.y;
+            colour = getCheckerColour(x, y);
             if (t.target.classList.contains('highlighted')) {
                 if (mustJump) {
-                    removeJumpedPiece(board, t.target);
+                    removeJumpedPiece(Board, t.target);
                     mustJump = false;
                     clearAbleToJump();
-                    movePiece(board, t.target);
+                    movePiece(Board, t.target);
                     unselectTarget();
                     unhighlightMoves();
                     if (!justKinged) {
-                        if (checkForDoubleJump(board, t.target)) {
+                        if (checkForDoubleJump(Board, t.target)) {
                             mustJump = true;
                             selectTarget(t);
                         }
@@ -298,7 +329,7 @@ function addEventListeners(board) {
                         justKinged = false;
                     }
                 } else {
-                    movePiece(board, t.target);
+                    movePiece(Board, t.target);
                     unselectTarget();
                     unhighlightMoves();
                     justKinged = false;
@@ -306,7 +337,7 @@ function addEventListeners(board) {
                 // Only run this in case there's no double jump
                 if (!mustJump) {
                     turn = turn == 'red' ? 'black' : 'red';
-                    checkForJumps(board);
+                    checkForJumps(Board);
                 }
             } else if (colour) {
                 if ((turn == 'red' && colour == 'red') ||
@@ -316,9 +347,9 @@ function addEventListeners(board) {
                     selectTarget(t);
                     unhighlightMoves();
                     if(mustJump) {
-                        highlightAllowedJumps(board, t.target);
+                        highlightAllowedJumps(Board, t.target);
                     } else {
-                        highlightAllowedMoves(board, t);
+                        highlightAllowedMoves(Board, t);
                     }   
                 }
             }
@@ -327,21 +358,22 @@ function addEventListeners(board) {
 }
 
 function startGame() {
-    let board = createBoardArray();
-    board = createCheckerBoard(board);
-    placeCheckers(board);
-    // placeChecker(board, 0, 7, 'red');
-    // placeChecker(board, 1, 6, 'black');
-    // placeChecker(board, 3, 6, 'black');
-    // placeChecker(board, 5, 6, 'black');
-    // board[7][0].firstChild.classList.add('king');
-    // board[7][0].firstChild.classList.add('ableToJump')
-    // board[6][3].firstChild.classList.add('king');
-    addEventListeners(board);
+    const Board = createBoardArray();
+    createCheckerBoard(Board);
+    placeCheckers(Board);
+    // placeChecker(Board, 0, 7, 'red');
+    // placeChecker(Board, 1, 6, 'black');
+    // placeChecker(Board, 3, 6, 'black');
+    // placeChecker(Board, 5, 6, 'black');
+    // Board[7][0].firstChild.classList.add('king');
+    // Board[7][0].firstChild.classList.add('ableToJump')
+    // Board[6][3].firstChild.classList.add('king');
+    addEventListeners(Board);
 }
 
 let turn = 'red';
 let mustJump = false;
 let justKinged = false;
+const Checkers = createCheckersArray();
 
 startGame();
