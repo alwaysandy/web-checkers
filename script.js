@@ -176,47 +176,42 @@ function highlightAllowedJumps(board, t) {
 }
 
 function checkForJumps(board, colour) {
+    let checkers;
     if (colour == 'red') {
-        const checkers = document.querySelectorAll('.red-checker');
-        checkers.forEach((checker) => {
-            let x = parseInt(checker.dataset.x);
-            let y = parseInt(checker.dataset.y);
-            let king = board[y][x].firstChild.classList.contains('king');
-            if (checkForJump(board, x, y, 2, -2, 'red') ||
-            checkForJump(board, x, y, -2, -2, 'red')) {
-                board[y][x].firstChild.classList.add('ableToJump');
-                mustJump = true;
-            }
-
-            if (king) {
-                if (checkForJump(board, x, y, -2, 2, 'red') ||
-                checkForJump(board, x, y, 2, 2, 'red')) {
-                    board[y][x].firstChild.classList.add('ableToJump');
-                    mustJump = true;
-                }
-            }
-        });
+        checkers = document.querySelectorAll('.red-checker');
     } else if (colour == 'black') {
-        const checkers = document.querySelectorAll('.black-checker');
-        checkers.forEach((checker) => {
-            let x = parseInt(checker.dataset.x);
-            let y = parseInt(checker.dataset.y);
-            let king = board[y][x].firstChild.classList.contains('king');
-            if (checkForJump(board, x, y, -2, 2, 'black') ||
-            checkForJump(board, x, y, 2, 2, 'black')) {
+        checkers = document.querySelectorAll('.black-checker');
+    } else {
+        return;
+    }
+    
+    checkers.forEach((checker) => {
+        let x = parseInt(checker.dataset.x);
+        let y = parseInt(checker.dataset.y);
+        let king = board[y][x].firstChild.classList.contains('king');
+
+        if (king) {
+            if (checkForJump(board, x, y, -2, 2, colour) ||
+            checkForJump(board, x, y, 2, 2, colour) ||
+            checkForJump(board, x, y, 2, -2, colour) ||
+            checkForJump(board, x, y, -2, -2, colour)) {
                 board[y][x].firstChild.classList.add('ableToJump');
                 mustJump = true;
             }
-
-            if (king) {
-                if (checkForJump(board, x, y, 2, -2, 'black') ||
-                checkForJump(board, x, y, -2, -2, 'black')) {
-                    board[y][x].firstChild.classList.add('ableToJump');
-                    mustJump = true;
-                }
+        } else if (colour == "red") {
+            if (checkForJump(board, x, y, 2, -2, colour) ||
+            checkForJump(board, x, y, -2, -2, colour)) {
+                board[y][x].firstChild.classList.add('ableToJump');
+                mustJump = true;
             }
-        });
-    }
+        } else {
+            if (checkForJump(board, x, y, -2, 2, colour) ||
+            checkForJump(board, x, y, 2, 2, colour)) {
+                board[y][x].firstChild.classList.add('ableToJump');
+                mustJump = true;
+            }
+        }
+    });
 }
 
 function checkForJump(board, x, y, dirX, dirY, colour) {
@@ -296,8 +291,10 @@ function movePiece(board, t) {
     let colour = getCheckerColour(board[y][x]);
     if (colour == 'black' && y == 7) {
         kingMe(board, x, y);
+        justKinged = true;
      } else if (colour == 'red' && y == 0) {
          kingMe(board, x, y);
+         justKinged = true;
      }
 }
 
@@ -317,14 +314,19 @@ function addEventListeners(board) {
                     movePiece(board, t.target);
                     unselectTarget();
                     unhighlightMoves();
-                    if (checkForDoubleJump(board, t.target)) {
-                        mustJump = true;
-                        selectTarget(t);
+                    if (!justKinged) {
+                        if (checkForDoubleJump(board, t.target)) {
+                            mustJump = true;
+                            selectTarget(t);
+                        }
+                    } else {
+                        justKinged = false;
                     }
                 } else {
                     movePiece(board, t.target);
                     unselectTarget();
                     unhighlightMoves();
+                    justKinged = false;
                 }
                 // Only run this in case there's no double jump
                 if (!mustJump) {
@@ -371,5 +373,6 @@ function startGame() {
 
 let turn = 'red';
 let mustJump = false;
+let justKinged = false;
 
 startGame();
