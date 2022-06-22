@@ -107,7 +107,7 @@ function highlightAllowedMoves(board, t) {
     let color = getCheckerColour(board[y][x]);
     let king = board[y][x].firstChild.classList.contains('king');
     
-    if (color == 'black' || king == true) {
+    if (color == 'black' || king) {
         if (moveAllowed(board, x, y, 1, 1)) {
             board[y + 1][x + 1].classList.add('highlighted');
         }
@@ -116,7 +116,7 @@ function highlightAllowedMoves(board, t) {
         }
     }
     
-    if (color == 'red' || king == true) {
+    if (color == 'red' || king) {
         if (moveAllowed(board, x, y, 1, -1)) {
             board[y - 1][x + 1].classList.add('highlighted');
         }
@@ -184,14 +184,14 @@ function checkForJumps(board, colour) {
             let king = board[y][x].firstChild.classList.contains('king');
             if (checkForJump(board, x, y, 2, -2, 'red') ||
             checkForJump(board, x, y, -2, -2, 'red')) {
-                board[y][x].firstChild.classList.add('selectable');
+                board[y][x].firstChild.classList.add('ableToJump');
                 mustJump = true;
             }
 
             if (king) {
                 if (checkForJump(board, x, y, -2, 2, 'red') ||
                 checkForJump(board, x, y, 2, 2, 'red')) {
-                    board[y][x].firstChild.classList.add('selectable');
+                    board[y][x].firstChild.classList.add('ableToJump');
                     mustJump = true;
                 }
             }
@@ -204,14 +204,14 @@ function checkForJumps(board, colour) {
             let king = board[y][x].firstChild.classList.contains('king');
             if (checkForJump(board, x, y, -2, 2, 'black') ||
             checkForJump(board, x, y, 2, 2, 'black')) {
-                board[y][x].firstChild.classList.add('selectable');
+                board[y][x].firstChild.classList.add('ableToJump');
                 mustJump = true;
             }
 
             if (king) {
                 if (checkForJump(board, x, y, 2, -2, 'black') ||
                 checkForJump(board, x, y, -2, -2, 'black')) {
-                    board[y][x].firstChild.classList.add('selectable');
+                    board[y][x].firstChild.classList.add('ableToJump');
                     mustJump = true;
                 }
             }
@@ -245,21 +245,21 @@ function getCheckerColour(t) {
     return false;
 }
 
-function isSelectable(t) {
-    if (t.classList.contains('selectable'))
+function isAbleToJump(t) {
+    if (t.classList.contains('ableToJump'))
         return true;
     else if (t.hasChildNodes()) {
-        return t.firstChild.classList.contains('selectable');
+        return t.firstChild.classList.contains('ableToJump');
     }
 
     return false;
 }
 
-function clearSelectable() {
-    let hasSelectable = document.querySelectorAll('.selectable');
-    if (hasSelectable) {
-        hasSelectable.forEach((selectable) => {
-            selectable.classList.remove('selectable');
+function clearAbleToJump() {
+    let hasAbleToJump = document.querySelectorAll('.ableToJump');
+    if (hasAbleToJump) {
+        hasAbleToJump.forEach((ableToJump) => {
+            ableToJump.classList.remove('ableToJump');
         });
     }
 }
@@ -306,13 +306,14 @@ function addEventListeners(board) {
     tiles.forEach((tile) => {
         tile.addEventListener('click', (t) => {
             // REWRITE ME
+            // HELL PILE OF CODE THAT SOMEHOW WORKS
 
             colour = getCheckerColour(t.target)
             if (t.target.classList.contains('highlighted')) {
                 if (mustJump) {
                     removeJumpedPiece(board, t.target);
                     mustJump = false;
-                    clearSelectable();
+                    clearAbleToJump();
                     movePiece(board, t.target);
                     unselectTarget();
                     unhighlightMoves();
@@ -340,7 +341,7 @@ function addEventListeners(board) {
                         highlightAllowedMoves(board, t);
                     }
                 } else {
-                    if (isSelectable(t.target) && 
+                    if (isAbleToJump(t.target) && 
                     ((turn == 'red' && colour == 'red') ||
                     (turn == 'black' && colour == 'black'))) {
                         unselectTarget();
@@ -363,7 +364,7 @@ function startGame() {
     // placeChecker(board, 3, 6, 'black');
     // placeChecker(board, 5, 6, 'black');
     // board[7][0].firstChild.classList.add('king');
-    // board[7][0].firstChild.classList.add('selectable')
+    // board[7][0].firstChild.classList.add('ableToJump')
     // board[6][3].firstChild.classList.add('king');
     addEventListeners(board);
 }
