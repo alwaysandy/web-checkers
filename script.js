@@ -205,14 +205,14 @@ function checkForJumps(Board) {
         if (colour == "red" || king) {
             if (checkForJump(Board, x, y, 2, -2, colour) ||
             checkForJump(Board, x, y, -2, -2, colour)) {
-                Board[y][x].firstChild.classList.add('ableToJump');
+                Checkers[y][x],ableToJump = true;
                 mustJump = true;
             }
         }
         if (colour == "black" || king) {
             if (checkForJump(Board, x, y, -2, 2, colour) ||
             checkForJump(Board, x, y, 2, 2, colour)) {
-                Board[y][x].firstChild.classList.add('ableToJump');
+                Checkers[y][x].ableToJump = true;
                 mustJump = true;
             }
         }
@@ -245,21 +245,20 @@ function getCheckerColour(x, y) {
 }
 
 function isAbleToJump(t) {
-    if (t.classList.contains('ableToJump'))
-        return true;
-    else if (t.hasChildNodes()) {
-        return t.firstChild.classList.contains('ableToJump');
+    if (Checkers[y][x]) {
+        return Checkers[y][x].ableToJump;
     }
 
     return false;
 }
 
 function clearAbleToJump() {
-    let hasAbleToJump = document.querySelectorAll('.ableToJump');
-    if (hasAbleToJump) {
-        hasAbleToJump.forEach((ableToJump) => {
-            ableToJump.classList.remove('ableToJump');
-        });
+    for (let y = 0; y < 8; y++) {
+        for (let x = 0; x < 8; x++) {
+            if (Checkers[y][x]) {
+                Checkers[y][x].ableToJump = false;
+            }
+        }
     }
 }
 
@@ -346,7 +345,7 @@ function addEventListeners(Board) {
             } else if (colour) {
                 if ((turn == 'red' && colour == 'red') ||
                 (turn == 'black' && colour == 'black') ||
-                isAbleToJump(t.target)) {
+                isAbleToJump(x, y)) {
                     unselectTarget();
                     selectTarget(t);
                     unhighlightMoves();
@@ -371,7 +370,7 @@ function startGame() {
     placeChecker(Board, 5, 6, 'black');
     Board[7][0].firstChild.classList.add('king');
     Checkers[7][0].king = true;
-    Board[7][0].firstChild.classList.add('ableToJump')
+    Checkers[7][0].ableToJump = true;
     Board[6][3].firstChild.classList.add('king');
     Checkers[6][3].king = true;
     addEventListeners(Board);
