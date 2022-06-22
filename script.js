@@ -101,19 +101,18 @@ function placeCheckers(Board) {
     }
 }
 
-function unselectTarget() {
+function unselectTile() {
     let selected = document.querySelector('.selected');
     if (selected) {
         selected.classList.remove('selected');
     }
+    selected = [-1, -1];
 }
 
-function selectTarget(t) {
-    if (t.target.classList.contains('tile')) {
-        t.target.classList.add('selected');
-    } else {
-        t.target.parentNode.classList.add('selected');
-    }
+function selectTile(x, y) {
+    Board[y][x].classList.add('selected');
+    selectedTile[0] = x;
+    selectedTile[1] = y;
 }
 
 function unhighlightMoves() {
@@ -256,9 +255,8 @@ function checkForDoubleJump(Board, x, y) {
 }
 
 function removeJumpedPiece(Board, newX, newY) {
-    let oldSpace = document.querySelector('.selected');
-    let oldX = parseInt(oldSpace.dataset.x);
-    let oldY = parseInt(oldSpace.dataset.y);
+    let oldX = selectedTile[0];
+    let oldY = selectedTile[1];
 
     let rX = (oldX + newX) / 2;
     let rY = (oldY + newY) / 2;
@@ -273,12 +271,13 @@ function kingMe(Board, x, y) {
 }
 
 function movePiece(Board, x, y) {
-    const selected = document.querySelector('.selected').firstChild;
-    let oldX = selected.dataset.x;
-    let oldY = selected.dataset.y;
-    selected.dataset.x = x;
-    selected.dataset.y = y;
-    Board[y][x].appendChild(selected);
+    const selectedChecker = Board[selectedTile[1]][selectedTile[0]].firstChild;
+    let oldX = selectedTile[0];
+    let oldY = selectedTile[1];
+
+    selectedChecker.dataset.x = x;
+    selectedChecker.dataset.y = y;
+    Board[y][x].appendChild(selectedChecker);
     let movedPiece = Checkers[oldY][oldX];
     Checkers[oldY][oldX] = 0;
     Checkers[y][x] = movedPiece;
@@ -305,19 +304,19 @@ function addEventListeners(Board) {
                     mustJump = false;
                     clearAbleToJump();
                     movePiece(Board, x, y);
-                    unselectTarget();
+                    unselectTile();
                     unhighlightMoves();
                     if (!justKinged) {
                         if (checkForDoubleJump(Board, x, y)) {
                             mustJump = true;
-                            selectTarget(t);
+                            selectTile(x, y);
                         }
                     } else {
                         justKinged = false;
                     }
                 } else {
                     movePiece(Board, x, y);
-                    unselectTarget();
+                    unselectTile();
                     unhighlightMoves();
                     justKinged = false;
                 }
@@ -330,8 +329,8 @@ function addEventListeners(Board) {
                 if ((turn == 'red' && colour == 'red') ||
                 (turn == 'black' && colour == 'black') ||
                 Checkers[y][x].isAbleToJump) {
-                    unselectTarget();
-                    selectTarget(t);
+                    unselectTile();
+                    selectTile(x, y);
                     unhighlightMoves();
                     if(mustJump) {
                         highlightAllowedJumps(Board, x, y);
@@ -346,23 +345,24 @@ function addEventListeners(Board) {
 
 function startGame() {
     createCheckerBoard(Board);
-    // placeCheckers(Board);
-    placeChecker(Board, 0, 7, 'red');
-    placeChecker(Board, 1, 6, 'black');
-    placeChecker(Board, 3, 6, 'black');
-    placeChecker(Board, 5, 6, 'black');
-    Board[7][0].firstChild.classList.add('king');
-    Checkers[7][0].king = true;
-    Checkers[7][0].ableToJump = true;
-    Board[6][3].firstChild.classList.add('king');
-    Checkers[6][3].king = true;
+    placeCheckers(Board);
+    // placeChecker(Board, 0, 7, 'red');
+    // placeChecker(Board, 1, 6, 'black');
+    // placeChecker(Board, 3, 6, 'black');
+    // placeChecker(Board, 5, 6, 'black');
+    // Board[7][0].firstChild.classList.add('king');
+    // Checkers[7][0].king = true;
+    // Checkers[7][0].ableToJump = true;
+    // Board[6][3].firstChild.classList.add('king');
+    // Checkers[6][3].king = true;
     addEventListeners(Board);
 }
 
 let turn = 'red';
-let mustJump = true;
+let mustJump = false;
 let justKinged = false;
 const Checkers = createCheckersArray();
 const Board = createBoardArray();
+const selectedTile = [-1, -1];
 
 startGame();
