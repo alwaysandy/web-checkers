@@ -151,7 +151,7 @@ function highlightAllowedMoves(Board, x, y) {
 function moveAllowed(Board, x, y, dirX, dirY) {
     if (y + dirY < 8 && y + dirY >= 0) {
         if (x + dirX < 8 && x + dirX >= 0) {
-            if (Checkers[y + dirY][x + dirX] == 0) {
+            if (!Checkers[y + dirY][x + dirX]) {
                 return true;
             }
         }
@@ -221,7 +221,8 @@ function checkForJump(Board, x, y, dirX, dirY, colour) {
             if (!Checkers[y + dirY][x + dirX])
             {
                 if ((colour == 'red' && 
-                Checkers[y + (dirY / 2)][x + (dirX / 2)].colour == 'black') || (colour == 'black' && 
+                Checkers[y + (dirY / 2)][x + (dirX / 2)].colour == 'black') || 
+                (colour == 'black' && 
                 Checkers[y + (dirY / 2)][x + (dirX / 2)] == 'red'))
                 {
                     return true;
@@ -234,14 +235,6 @@ function checkForJump(Board, x, y, dirX, dirY, colour) {
 function getCheckerColour(x, y) {
     if (Checkers[y][x]) {
         return Checkers[y][x].colour;
-    }
-
-    return false;
-}
-
-function isAbleToJump(x, y) {
-    if (Checkers[y][x]) {
-        return Checkers[y][x].ableToJump;
     }
 
     return false;
@@ -336,7 +329,7 @@ function addEventListeners(Board) {
             } else if (colour) {
                 if ((turn == 'red' && colour == 'red') ||
                 (turn == 'black' && colour == 'black') ||
-                isAbleToJump(x, y)) {
+                Checkers[y][x].isAbleToJump) {
                     unselectTarget();
                     selectTarget(t);
                     unhighlightMoves();
