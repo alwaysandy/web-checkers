@@ -307,23 +307,17 @@ function addEventListeners(board) {
                     checkForJumps(board);
                 }
             } else if (colour) {
-                if (!mustJump) {
-                    if ((turn == 'red' && colour == 'red') ||
-                    (turn == 'black' && colour == 'black')) {
-                        unselectTarget();
-                        selectTarget(t);
-                        unhighlightMoves();
-                        highlightAllowedMoves(board, t);
-                    }
-                } else {
-                    if (isAbleToJump(t.target) && 
-                    ((turn == 'red' && colour == 'red') ||
-                    (turn == 'black' && colour == 'black'))) {
-                        unselectTarget();
-                        selectTarget(t);
-                        unhighlightMoves();
+                if ((turn == 'red' && colour == 'red') ||
+                (turn == 'black' && colour == 'black') ||
+                isAbleToJump(t.target)) {
+                    unselectTarget();
+                    selectTarget(t);
+                    unhighlightMoves();
+                    if(mustJump) {
                         highlightAllowedJumps(board, t.target);
-                    }
+                    } else {
+                        highlightAllowedMoves(board, t);
+                    }   
                 }
             }
         });
