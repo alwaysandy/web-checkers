@@ -77,6 +77,10 @@ function placeChecker(Board, x, y, colour) {
     checker.dataset.x = x;
     checker.dataset.y = y;
     Board[y][x].appendChild(checker);
+
+    let checkerData = createChecker();
+    checkerData.colour = colour;
+    Checkers[y][x] = checkerData;
 }
 
 function placeCheckers(Board) {
@@ -84,9 +88,6 @@ function placeCheckers(Board) {
         for (let x = 0; x < 8; x++) {
             if (Board[y][x].classList.contains('black')) {
                 placeChecker(Board, x, y, 'black')
-                let checker = createChecker();
-                checker.colour = "black";
-                Checkers[y][x] = checker;
             }
         }
     }
@@ -95,9 +96,6 @@ function placeCheckers(Board) {
         for (let x = 0; x < 8; x++) {
             if (Board[y][x].classList.contains('black')) {
                 placeChecker(Board, x, y, 'red');
-                let checker = createChecker();
-                checker.colour = "red";
-                Checkers[y][x] = checker;
             }
         }
     }
