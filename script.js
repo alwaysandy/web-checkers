@@ -361,7 +361,9 @@ function addEventListeners(Board) {
                 if (!mustJump) {
                     turn = turn == 'red' ? 'black' : 'red';
                     checkForJumps(Board);
+                    // mustJump being true signifies there is a move to make
                     if (!mustJump) {
+                        // checkForWin just checks whether there's an available move to make
                         if (checkForWin(Board)) {
                             alert("WINNER WINNER CHICKEN DINNER");
                         }
