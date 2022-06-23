@@ -115,36 +115,38 @@ function selectTile(x, y) {
     selectedTile[1] = y;
 }
 
-function unhighlightMoves() {
-    let highlighted = document.querySelectorAll('.highlighted');
-    if (highlighted) {
-        highlighted.forEach((node) => {
-            node.classList.remove('highlighted');
-        });
-    }
+function clearValidMoves(Board) {
+    validMoves.forEach(move => {
+        Board[move[1]][move[0]].classList.remove('highlighted');
+    });
+    validMoves = [];
 }
 
-function highlightAllowedMoves(Board, x, y) {
+function findValidMoves(Board, x, y) {
     let color = getCheckerColour(x, y);
     let king = Checkers[y][x].king;
     
     if (color == 'black' || king) {
         if (moveAllowed(Board, x, y, 1, 1)) {
-            Board[y + 1][x + 1].classList.add('highlighted');
+            validMoves.push([x + 1, y + 1]);
         }
         if (moveAllowed(Board, x, y, -1, 1)) {
-            Board[y + 1][x - 1].classList.add('highlighted');
+            validMoves.push([x - 1, y + 1]);
         }
     }
     
     if (color == 'red' || king) {
         if (moveAllowed(Board, x, y, 1, -1)) {
-            Board[y - 1][x + 1].classList.add('highlighted');
+            validMoves.push([x + 1, y - 1]);
         }
         if (moveAllowed(Board, x, y, -1, -1)) {
-            Board[y - 1][x - 1].classList.add('highlighted');
+            validMoves.push([x - 1, y - 1]);
         }
     }
+
+    validMoves.forEach(move => {
+        Board[move[1]][move[0]].classList.add('highlighted');
+    });
 }
 
 function moveAllowed(Board, x, y, dirX, dirY) {
@@ -157,26 +159,30 @@ function moveAllowed(Board, x, y, dirX, dirY) {
     }
 }
 
-function highlightAllowedJumps(Board, x, y) {
+function findJumps(x, y) {
     let colour = getCheckerColour(x, y);
     let king = Checkers[y][x].king;
     if (colour == 'red' || king) {
         if (checkForJump(Board, x, y, 2, -2, colour)) {
-            Board[y - 2][x + 2].classList.add('highlighted');
+            validMoves.push([x + 2, y - 2]);
         }
         if (checkForJump(Board, x, y, -2, -2, colour)) {
-            Board[y - 2][x - 2].classList.add('highlighted');
+            validMoves.push([x - 2, y - 2]);
         }
     }
 
     if (colour == 'black' || king) {
         if (checkForJump(Board, x, y, 2, 2, colour)) {
-            Board[y + 2][x + 2].classList.add('highlighted');
+            validMoves.push([x + 2, y + 2]);
         }
         if (checkForJump(Board, x, y, -2, 2, colour)) {
-            Board[y + 2][x - 2].classList.add('highlighted');
+            validMoves.push([x - 2, y + 2]);
         }
     }
+
+    validMoves.forEach(move => {
+        Board[move[1]][move[0]].classList.add('highlighted');
+    });
 }
 
 function checkForJumps(Board) {
@@ -249,9 +255,9 @@ function clearAbleToJump() {
     }
 }
 
-function checkForDoubleJump(Board, x, y) {
-    highlightAllowedJumps(Board, x, y);
-    return document.querySelectorAll('.highlighted').length > 0;
+function findDoubleJump(x, y) {
+    findJumps(x, y);
+    return validMoves.length > 0;
 }
 
 function removeJumpedPiece(Board, newX, newY) {
@@ -271,9 +277,9 @@ function kingMe(Board, x, y) {
 }
 
 function movePiece(Board, x, y) {
-    const selectedChecker = Board[selectedTile[1]][selectedTile[0]].firstChild;
     let oldX = selectedTile[0];
     let oldY = selectedTile[1];
+    const selectedChecker = Board[oldY][oldX].firstChild;
 
     selectedChecker.dataset.x = x;
     selectedChecker.dataset.y = y;
@@ -297,17 +303,17 @@ function addEventListeners(Board) {
             // HELL PILE OF CODE THAT SOMEHOW WORKS
             let x = parseInt(t.target.dataset.x);
             let y = parseInt(t.target.dataset.y);
-            colour = getCheckerColour(x, y);
-            if (t.target.classList.contains('highlighted')) {
+            let colour = getCheckerColour(x, y);
+            if (validMoves.find((move) => move[0] === x && move[1] === y)) {
                 if (mustJump) {
                     removeJumpedPiece(Board, x, y);
                     mustJump = false;
                     clearAbleToJump();
                     movePiece(Board, x, y);
                     unselectTile();
-                    unhighlightMoves();
+                    clearValidMoves(Board);
                     if (!justKinged) {
-                        if (checkForDoubleJump(Board, x, y)) {
+                        if (findDoubleJump(Board, x, y)) {
                             mustJump = true;
                             selectTile(x, y);
                         }
@@ -317,7 +323,7 @@ function addEventListeners(Board) {
                 } else {
                     movePiece(Board, x, y);
                     unselectTile();
-                    unhighlightMoves();
+                    clearValidMoves(Board);
                     justKinged = false;
                 }
                 // Only run this in case there's no double jump
@@ -331,11 +337,11 @@ function addEventListeners(Board) {
                 Checkers[y][x].isAbleToJump) {
                     unselectTile();
                     selectTile(x, y);
-                    unhighlightMoves();
+                    clearValidMoves(Board);
                     if(mustJump) {
-                        highlightAllowedJumps(Board, x, y);
+                        findJumps(x, y);
                     } else {
-                        highlightAllowedMoves(Board, x, y);
+                        findValidMoves(Board, x, y)
                     }   
                 }
             }
@@ -364,5 +370,6 @@ let justKinged = false;
 const Checkers = createCheckersArray();
 const Board = createBoardArray();
 const selectedTile = [-1, -1];
+let validMoves = [];
 
 startGame();
