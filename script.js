@@ -180,8 +180,8 @@ function highlightAllowedJumps(Board, x, y) {
 }
 
 function checkForJumps(Board) {
-    let checkers = [];
     let colour = turn;
+    let checkers = [];
     for (let y = 0; y < 8; y++) {
         for (let x = 0; x < 8; x++) {
             if (Checkers[y][x]) {
@@ -222,7 +222,7 @@ function checkForJump(Board, x, y, dirX, dirY, colour) {
                 if ((colour == 'red' && 
                 Checkers[y + (dirY / 2)][x + (dirX / 2)].colour == 'black') || 
                 (colour == 'black' && 
-                Checkers[y + (dirY / 2)][x + (dirX / 2)] == 'red'))
+                Checkers[y + (dirY / 2)][x + (dirX / 2)].colour == 'red'))
                 {
                     return true;
                 }
