@@ -122,7 +122,7 @@ function clearValidMoves(Board) {
     validMoves = [];
 }
 
-function findValidMoves(Board, x, y) {
+function findValidMoves(x, y) {
     let color = getCheckerColour(x, y);
     let king = Checkers[y][x].king;
     
@@ -143,7 +143,9 @@ function findValidMoves(Board, x, y) {
             validMoves.push([x - 1, y - 1]);
         }
     }
+}
 
+function highlightValidMoves(Board) {
     validMoves.forEach(move => {
         Board[move[1]][move[0]].classList.add('highlighted');
     });
@@ -295,6 +297,35 @@ function movePiece(Board, x, y) {
      }
 }
 
+function checkForWin(Board) {
+    let checkers = [];
+    for (let y = 0; y < 8; y++) {
+        for (let x = 0; x < 8; x++) {
+            if (Checkers[y][x]) {
+                if (Checkers[y][x].colour === turn) {
+                    checkers.push([x, y]);
+                }
+            }
+        }
+    }
+
+    if (checkers.length === 0) {
+        return true;
+    } else {
+        for (let i = 0; i < checkers.length; i++) {
+            let x = checkers[i][0];
+            let y = checkers[i][1]
+            findValidMoves(x, y);
+            if (validMoves) {
+                clearValidMoves(Board);
+                return false;
+            } 
+        }
+    }
+
+    return true;
+}
+
 function addEventListeners(Board) {
     const tiles = document.querySelectorAll('.tile');
     tiles.forEach((tile) => {
@@ -317,9 +348,9 @@ function addEventListeners(Board) {
                             mustJump = true;
                             selectTile(Board, x, y);
                         }
-                    } else {
-                        justKinged = false;
                     }
+
+                    justKinged = false;
                 } else {
                     movePiece(Board, x, y);
                     unselectTile();
@@ -330,8 +361,13 @@ function addEventListeners(Board) {
                 if (!mustJump) {
                     turn = turn == 'red' ? 'black' : 'red';
                     checkForJumps(Board);
+                    if (!mustJump) {
+                        if (checkForWin(Board)) {
+                            alert("WINNER WINNER CHICKEN DINNER");
+                        }
+                    }
                 }
-            } else if (colour) {
+            } else if (Checkers[y][x]) {
                 if ((turn == 'red' && colour == 'red') ||
                 (turn == 'black' && colour == 'black') ||
                 Checkers[y][x].isAbleToJump) {
@@ -341,7 +377,8 @@ function addEventListeners(Board) {
                     if(mustJump) {
                         findJumps(Board, x, y);
                     } else {
-                        findValidMoves(Board, x, y)
+                        findValidMoves(x, y);
+                        highlightValidMoves(Board);
                     }   
                 }
             }
