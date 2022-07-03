@@ -260,10 +260,12 @@ function movePiece(Board, x, y) {
 
     justKinged = false;
     let colour = Checkers[y][x].colour;
-    if ((colour == 'black' && y == 7) ||
-    (colour == 'red' && y == 0)) {
-         kingMe(Board, x, y);
-     }
+    if (!Checkers[y][x].king) {
+        if ((colour == 'black' && y == 7) ||
+        (colour == 'red' && y == 0)) {
+            kingMe(Board, x, y);
+        }
+    }
 }
 
 function checkForWin(Board) {
@@ -271,7 +273,6 @@ function checkForWin(Board) {
         for (let x = 0; x < 8; x++) {
             if (Checkers[y][x]) {
                 if (Checkers[y][x].colour === turn) {
-                    ++count;
                     findValidMoves(x, y);
                     if (validMoves.length > 0) {
                         clearValidMoves(Board);
@@ -307,8 +308,6 @@ function addEventListeners(Board) {
                             mustJump = true;
                             selectTile(Board, x, y);
                         }
-                    } else {
-                        justKinged = false;
                     }
                 } else {
                     movePiece(Board, x, y);
@@ -349,14 +348,11 @@ function startGame() {
     const Board = createBoardArray();
     createCheckerBoard(Board);
     placeCheckers(Board);
-    // placeChecker(Board, 0, 7, 'red');
-    // placeChecker(Board, 1, 6, 'black');
-    // placeChecker(Board, 3, 6, 'black');
+    // placeChecker(Board, 1, 2, 'red');
+    // Checkers[2][1].king = true;
+    // placeChecker(Board, 2, 1, 'black');
+    // placeChecker(Board, 4, 1, 'black');
     // placeChecker(Board, 5, 6, 'black');
-    // Board[7][0].firstChild.classList.add('king');
-    // Checkers[7][0].king = true;
-    // Board[6][3].firstChild.classList.add('king');
-    // Checkers[6][3].king = true;
     addEventListeners(Board);
 }
 
