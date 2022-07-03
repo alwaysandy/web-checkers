@@ -1,6 +1,3 @@
-// TODO NEXT
-// Add king support
-
 function createBoardArray() {
     // This is where all the game tile dom elements are saved
     const Board = [];
@@ -187,24 +184,23 @@ function findJumps(Board, x, y) {
 }
 
 function checkIfJumpAvailable() {
-    let colour = turn;
     let king;
     for (let y = 0; y < 8; y++) {
         for (let x = 0; x < 8; x++) {
             if (Checkers[y][x]) {
-                if (Checkers[y][x].colour == colour) {
+                if (Checkers[y][x].colour == turn) {
                     king = Checkers[y][x].king;
 
-                    if (colour == "red" || king) {
-                        if (checkForJump(x, y, 2, -2, colour) ||
-                        checkForJump(x, y, -2, -2, colour)) {
+                    if (turn == "red" || king) {
+                        if (checkForJump(x, y, 2, -2, turn) ||
+                        checkForJump(x, y, -2, -2, turn)) {
                             mustJump = true;
                             return true;
                         }
                     }
-                    if (colour == "black" || king) {
-                        if (checkForJump(x, y, -2, 2, colour) ||
-                        checkForJump(x, y, 2, 2, colour)) {
+                    if (turn == "black" || king) {
+                        if (checkForJump(x, y, -2, 2, turn) ||
+                        checkForJump(x, y, 2, 2, turn)) {
                             mustJump = true;
                             return true;
                         }
@@ -238,10 +234,10 @@ function removeJumpedPiece(Board, newX, newY) {
     let oldX = selectedTile[0];
     let oldY = selectedTile[1];
 
-    let rX = (oldX + newX) / 2;
-    let rY = (oldY + newY) / 2;
-    Board[rY][rX].removeChild(Board[rY][rX].firstChild);
-    Checkers[rY][rX] = 0;
+    let rmvX = (oldX + newX) / 2;
+    let rmvY = (oldY + newY) / 2;
+    Board[rmvY][rmvX].removeChild(Board[rmvY][rmvX].firstChild);
+    Checkers[rmvY][rmvX] = 0;
 }
 
 function kingMe(Board, x, y) {
@@ -271,29 +267,21 @@ function movePiece(Board, x, y) {
 }
 
 function checkForWin(Board) {
-    let checkers = [];
     for (let y = 0; y < 8; y++) {
         for (let x = 0; x < 8; x++) {
             if (Checkers[y][x]) {
                 if (Checkers[y][x].colour === turn) {
-                    checkers.push([x, y]);
+                    ++count;
+                    findValidMoves(x, y);
+                    if (validMoves.length > 0) {
+                        clearValidMoves(Board);
+                        return false;
+                    }
                 }
             }
         }
     }
-    if (checkers.length === 0) {
-        return true;
-    } else {
-        for (let i = 0; i < checkers.length; i++) {
-            let x = checkers[i][0];
-            let y = checkers[i][1]
-            findValidMoves(x, y);
-            if (validMoves) {
-                clearValidMoves(Board);
-                return false;
-            } 
-        }
-    }
+
 
     return true;
 }
@@ -319,6 +307,8 @@ function addEventListeners(Board) {
                             mustJump = true;
                             selectTile(Board, x, y);
                         }
+                    } else {
+                        justKinged = false;
                     }
                 } else {
                     movePiece(Board, x, y);
@@ -329,10 +319,10 @@ function addEventListeners(Board) {
                 if (!mustJump) {
                     turn = turn == 'red' ? 'black' : 'red';
                     if (!checkIfJumpAvailable(Board)) {
-                    // mustJump being true signifies there is a move to make
                         // checkForWin just checks whether there's an available move to make
                         if (checkForWin(Board)) {
-                            alert("WINNER WINNER CHICKEN DINNER");
+                            turn = turn == 'red' ? 'BLACK' : 'RED';
+                            alert(`WINNER WINNER CHICKEN DINNER ${turn} WINS`);
                         }
                     }
                 }
