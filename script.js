@@ -186,7 +186,7 @@ function findJumps(Board, x, y) {
     });
 }
 
-function checkIfMustJump() {
+function checkIfJumpAvailable() {
     let colour = turn;
     let king;
     for (let y = 0; y < 8; y++) {
@@ -328,7 +328,7 @@ function addEventListeners(Board) {
                 // Only run this in case there's no double jump
                 if (!mustJump) {
                     turn = turn == 'red' ? 'black' : 'red';
-                    if (!checkIfMustJump(Board)) {
+                    if (!checkIfJumpAvailable(Board)) {
                     // mustJump being true signifies there is a move to make
                         // checkForWin just checks whether there's an available move to make
                         if (checkForWin(Board)) {
