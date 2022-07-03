@@ -97,12 +97,12 @@ function placeCheckers(Board) {
     }
 }
 
-function unselectTile() {
-    let selected = document.querySelector('.selected');
-    if (selected) {
-        selected.classList.remove('selected');
+function unselectTile(Board) {
+    if (selectedTile[0] !== -1) {
+        Board[selectedTile[1]][selectedTile[0]].classList.remove('selected');
     }
-    selected = [-1, -1];
+    selectedTile[0] = -1;
+    selectedTile[1] = -1;
 }
 
 function selectTile(Board, x, y) {
@@ -300,7 +300,7 @@ function addEventListeners(Board) {
                     mustJump = false;
                     removeJumpedPiece(Board, x, y);
                     movePiece(Board, x, y);
-                    unselectTile();
+                    unselectTile(Board);
                     clearValidMoves(Board);
                     if (!justKinged) {
                         findJumps(Board, x, y);
@@ -311,7 +311,7 @@ function addEventListeners(Board) {
                     }
                 } else {
                     movePiece(Board, x, y);
-                    unselectTile();
+                    unselectTile(Board);
                     clearValidMoves(Board);
                 }
                 // Only run this in case there's no double jump
@@ -329,7 +329,7 @@ function addEventListeners(Board) {
                 let colour = Checkers[y][x].colour;
                 if ((turn == 'red' && colour == 'red') ||
                 (turn == 'black' && colour == 'black')) {
-                    unselectTile();
+                    unselectTile(Board);
                     selectTile(Board, x, y);
                     clearValidMoves(Board);
                     if(mustJump) {
