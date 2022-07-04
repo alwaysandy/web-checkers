@@ -39,14 +39,14 @@ function createCheckerBoard(Board) {
             tile.dataset.x = x;
             tile.dataset.y = y;
 
-            if (y % 2 == 0) {
-                if (x % 2 == 0) {
+            if (y % 2 === 0) {
+                if (x % 2 === 0) {
                     tile.classList.add('white');
                 } else {
                     tile.classList.add('black');
                 }
             } else {
-                if (x % 2 == 0) {
+                if (x % 2 === 0) {
                     tile.classList.add('black');
                 } else {
                     tile.classList.add('white');
@@ -64,7 +64,7 @@ function createCheckerBoard(Board) {
 function placeChecker(Board, x, y, colour) {
     let checker = document.createElement('div')
     checker.classList.add('checker');
-    if (colour == 'red') {
+    if (colour === 'red') {
         checker.classList.add('red-checker');
     } else {
         checker.classList.add('black-checker')
@@ -122,7 +122,7 @@ function findValidMoves(x, y) {
     let colour = Checkers[y][x].colour;
     let king = Checkers[y][x].king;
     
-    if (colour == 'black' || king) {
+    if (colour === 'black' || king) {
         if (moveAllowed(x, y, 1, 1)) {
             validMoves.push([x + 1, y + 1]);
         }
@@ -131,7 +131,7 @@ function findValidMoves(x, y) {
         }
     }
     
-    if (colour == 'red' || king) {
+    if (colour === 'red' || king) {
         if (moveAllowed(x, y, 1, -1)) {
             validMoves.push([x + 1, y - 1]);
         }
@@ -160,7 +160,7 @@ function moveAllowed(x, y, dirX, dirY) {
 function findJumps(Board, x, y) {
     let colour = Checkers[y][x].colour;
     let king = Checkers[y][x].king;
-    if (colour == 'red' || king) {
+    if (colour === 'red' || king) {
         if (checkForJump(x, y, 2, -2, colour)) {
             validMoves.push([x + 2, y - 2]);
         }
@@ -169,7 +169,7 @@ function findJumps(Board, x, y) {
         }
     }
 
-    if (colour == 'black' || king) {
+    if (colour === 'black' || king) {
         if (checkForJump(x, y, 2, 2, colour)) {
             validMoves.push([x + 2, y + 2]);
         }
@@ -178,9 +178,9 @@ function findJumps(Board, x, y) {
         }
     }
 
-    validMoves.forEach(move => {
+    for (let move of validMoves) {
         Board[move[1]][move[0]].classList.add('highlighted');
-    });
+    }
 }
 
 function checkIfJumpAvailable() {
@@ -188,17 +188,17 @@ function checkIfJumpAvailable() {
     for (let y = 0; y < 8; y++) {
         for (let x = 0; x < 8; x++) {
             if (Checkers[y][x]) {
-                if (Checkers[y][x].colour == turn) {
+                if (Checkers[y][x].colour === turn) {
                     king = Checkers[y][x].king;
 
-                    if (turn == "red" || king) {
+                    if (turn === "red" || king) {
                         if (checkForJump(x, y, 2, -2, turn) ||
                         checkForJump(x, y, -2, -2, turn)) {
                             mustJump = true;
                             return true;
                         }
                     }
-                    if (turn == "black" || king) {
+                    if (turn === "black" || king) {
                         if (checkForJump(x, y, -2, 2, turn) ||
                         checkForJump(x, y, 2, 2, turn)) {
                             mustJump = true;
@@ -218,10 +218,10 @@ function checkForJump(x, y, dirX, dirY, colour) {
         if (x + dirX < 8 && x + dirX >= 0) {
             if (!Checkers[y + dirY][x + dirX])
             {
-                if ((colour == 'red' && 
-                Checkers[y + (dirY / 2)][x + (dirX / 2)].colour == 'black') || 
-                (colour == 'black' && 
-                Checkers[y + (dirY / 2)][x + (dirX / 2)].colour == 'red'))
+                if ((colour === 'red' && 
+                Checkers[y + (dirY / 2)][x + (dirX / 2)].colour === 'black') || 
+                (colour === 'black' && 
+                Checkers[y + (dirY / 2)][x + (dirX / 2)].colour === 'red'))
                 {
                     return true;
                 }
@@ -261,8 +261,8 @@ function movePiece(Board, x, y) {
     justKinged = false;
     let colour = Checkers[y][x].colour;
     if (!Checkers[y][x].king) {
-        if ((colour == 'black' && y == 7) ||
-        (colour == 'red' && y == 0)) {
+        if ((colour === 'black' && y === 7) ||
+        (colour === 'red' && y === 0)) {
             kingMe(Board, x, y);
         }
     }
@@ -316,19 +316,19 @@ function addEventListeners(Board) {
                 }
                 // Only run this in case there's no double jump
                 if (!mustJump) {
-                    turn = turn == 'red' ? 'black' : 'red';
+                    turn = turn === 'red' ? 'black' : 'red';
                     if (!checkIfJumpAvailable(Board)) {
                         // checkForWin just checks whether there's an available move to make
                         if (checkForWin(Board)) {
-                            turn = turn == 'red' ? 'BLACK' : 'RED';
+                            turn = turn === 'red' ? 'BLACK' : 'RED';
                             alert(`WINNER WINNER CHICKEN DINNER ${turn} WINS`);
                         }
                     }
                 }
             } else if (Checkers[y][x]) {
                 let colour = Checkers[y][x].colour;
-                if ((turn == 'red' && colour == 'red') ||
-                (turn == 'black' && colour == 'black')) {
+                if ((turn === 'red' && colour === 'red') ||
+                (turn === 'black' && colour === 'black')) {
                     unselectTile(Board);
                     selectTile(Board, x, y);
                     clearValidMoves(Board);
