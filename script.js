@@ -142,9 +142,9 @@ function findValidMoves(x, y) {
 }
 
 function highlightValidMoves(Board) {
-    validMoves.forEach(move => {
+    for (let move of validMoves) {
         Board[move[1]][move[0]].classList.add('highlighted');
-    });
+    }
 }
 
 function moveAllowed(x, y, dirX, dirY) {
