@@ -217,14 +217,16 @@ function checkForJump(x, y, dirX, dirY, colour) {
     if (y + dirY < 8 && y + dirY >= 0) {
         if (x + dirX < 8 && x + dirX >= 0) {
             if (!Checkers[y + dirY][x + dirX])
-            {
-                if ((colour === 'red' && 
+            {   
+                return (Checkers[y + (dirY / 2)][x + (dirX / 2)] && 
+                    Checkers[y + (dirY / 2)][x + (dirX / 2)].colour !== colour); 
+                /*if ((colour === 'red' && 
                 Checkers[y + (dirY / 2)][x + (dirX / 2)].colour === 'black') || 
                 (colour === 'black' && 
                 Checkers[y + (dirY / 2)][x + (dirX / 2)].colour === 'red'))
                 {
                     return true;
-                }
+                }*/
             }
         }
     }
@@ -325,9 +327,7 @@ function addEventListeners(Board) {
                     }
                 }
             } else if (Checkers[y][x]) {
-                let colour = Checkers[y][x].colour;
-                if ((turn === 'red' && colour === 'red') ||
-                (turn === 'black' && colour === 'black')) {
+                if (turn === Checkers[y][x].colour) { 
                     unselectTile(Board);
                     selectTile(Board, x, y);
                     clearValidMoves(Board);
