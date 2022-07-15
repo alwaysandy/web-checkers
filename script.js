@@ -184,21 +184,18 @@ function findJumps(Board, x, y) {
 }
 
 function checkIfJumpAvailable() {
-    let king;
     for (let y = 0; y < 8; y++) {
         for (let x = 0; x < 8; x++) {
             if (Checkers[y][x]) {
                 if (Checkers[y][x].colour === turn) {
-                    king = Checkers[y][x].king;
-
-                    if (turn === "red" || king) {
+                    if (turn === "red" || Checkers[y][x].king) {
                         if (checkForJump(x, y, 2, -2) ||
                         checkForJump(x, y, -2, -2)) {
                             mustJump = true;
                             return true;
                         }
                     }
-                    if (turn === "black" || king) {
+                    if (turn === "black" || Checkers[y][x].king) {
                         if (checkForJump(x, y, -2, 2) ||
                         checkForJump(x, y, 2, 2)) {
                             mustJump = true;
