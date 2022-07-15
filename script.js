@@ -192,15 +192,15 @@ function checkIfJumpAvailable() {
                     king = Checkers[y][x].king;
 
                     if (turn === "red" || king) {
-                        if (checkForJump(x, y, 2, -2, turn) ||
-                        checkForJump(x, y, -2, -2, turn)) {
+                        if (checkForJump(x, y, 2, -2) ||
+                        checkForJump(x, y, -2, -2)) {
                             mustJump = true;
                             return true;
                         }
                     }
                     if (turn === "black" || king) {
-                        if (checkForJump(x, y, -2, 2, turn) ||
-                        checkForJump(x, y, 2, 2, turn)) {
+                        if (checkForJump(x, y, -2, 2) ||
+                        checkForJump(x, y, 2, 2)) {
                             mustJump = true;
                             return true;
                         }
@@ -213,13 +213,13 @@ function checkIfJumpAvailable() {
     return false;
 }
 
-function checkForJump(x, y, dirX, dirY, colour) {
+function checkForJump(x, y, dirX, dirY) {
     if (y + dirY < 8 && y + dirY >= 0) {
         if (x + dirX < 8 && x + dirX >= 0) {
             if (!Checkers[y + dirY][x + dirX])
             {   
                 return (Checkers[y + (dirY / 2)][x + (dirX / 2)] && 
-                    Checkers[y + (dirY / 2)][x + (dirX / 2)].colour !== colour); 
+                    Checkers[y + (dirY / 2)][x + (dirX / 2)].colour !== turn); 
                 /*if ((colour === 'red' && 
                 Checkers[y + (dirY / 2)][x + (dirX / 2)].colour === 'black') || 
                 (colour === 'black' && 
