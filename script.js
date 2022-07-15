@@ -297,23 +297,22 @@ function addEventListeners(Board) {
             let y = parseInt(t.target.dataset.y);
             if (validMoves.find((move) => move[0] === x && move[1] === y)) {
                 if (mustJump) {
-                    mustJump = false;
                     removeJumpedPiece(Board, x, y);
-                    movePiece(Board, x, y);
-                    unselectTile(Board);
-                    clearValidMoves(Board);
-                    if (!justKinged) {
-                        findJumps(Board, x, y);
-                        if (validMoves.length > 0) {
-                            mustJump = true;
-                            selectTile(Board, x, y);
-                        }
+                }
+                movePiece(Board, x, y);
+                unselectTile(Board);
+                clearValidMoves(Board);
+                if (!justKinged && mustJump) {
+                    findJumps(Board, x, y);
+                    if (validMoves.length > 0) {
+                        selectTile(Board, x, y);
+                    } else {
+                        mustJump = false;
                     }
                 } else {
-                    movePiece(Board, x, y);
-                    unselectTile(Board);
-                    clearValidMoves(Board);
+                    mustJump = false;
                 }
+                
                 // Only run this in case there's no double jump
                 if (!mustJump) {
                     turn = turn === 'red' ? 'black' : 'red';
