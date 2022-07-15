@@ -192,15 +192,15 @@ function checkIfJumpAvailable() {
                     king = Checkers[y][x].king;
 
                     if (turn === "red" || king) {
-                        if (checkForJump(x, y, 2, -2, turn) ||
-                        checkForJump(x, y, -2, -2, turn)) {
+                        if (checkForJump(x, y, 2, -2) ||
+                        checkForJump(x, y, -2, -2)) {
                             mustJump = true;
                             return true;
                         }
                     }
                     if (turn === "black" || king) {
-                        if (checkForJump(x, y, -2, 2, turn) ||
-                        checkForJump(x, y, 2, 2, turn)) {
+                        if (checkForJump(x, y, -2, 2) ||
+                        checkForJump(x, y, 2, 2)) {
                             mustJump = true;
                             return true;
                         }
@@ -213,18 +213,20 @@ function checkIfJumpAvailable() {
     return false;
 }
 
-function checkForJump(x, y, dirX, dirY, colour) {
+function checkForJump(x, y, dirX, dirY) {
     if (y + dirY < 8 && y + dirY >= 0) {
         if (x + dirX < 8 && x + dirX >= 0) {
             if (!Checkers[y + dirY][x + dirX])
-            {
-                if ((colour === 'red' && 
+            {   
+                return (Checkers[y + (dirY / 2)][x + (dirX / 2)] && 
+                    Checkers[y + (dirY / 2)][x + (dirX / 2)].colour !== turn); 
+                /*if ((colour === 'red' && 
                 Checkers[y + (dirY / 2)][x + (dirX / 2)].colour === 'black') || 
                 (colour === 'black' && 
                 Checkers[y + (dirY / 2)][x + (dirX / 2)].colour === 'red'))
                 {
                     return true;
-                }
+                }*/
             }
         }
     }
@@ -297,23 +299,22 @@ function addEventListeners(Board) {
             let y = parseInt(t.target.dataset.y);
             if (validMoves.find((move) => move[0] === x && move[1] === y)) {
                 if (mustJump) {
-                    mustJump = false;
                     removeJumpedPiece(Board, x, y);
-                    movePiece(Board, x, y);
-                    unselectTile(Board);
-                    clearValidMoves(Board);
-                    if (!justKinged) {
-                        findJumps(Board, x, y);
-                        if (validMoves.length > 0) {
-                            mustJump = true;
-                            selectTile(Board, x, y);
-                        }
+                }
+                movePiece(Board, x, y);
+                unselectTile(Board);
+                clearValidMoves(Board);
+                if (!justKinged && mustJump) {
+                    findJumps(Board, x, y);
+                    if (validMoves.length > 0) {
+                        selectTile(Board, x, y);
+                    } else {
+                        mustJump = false;
                     }
                 } else {
-                    movePiece(Board, x, y);
-                    unselectTile(Board);
-                    clearValidMoves(Board);
+                    mustJump = false;
                 }
+                
                 // Only run this in case there's no double jump
                 if (!mustJump) {
                     turn = turn === 'red' ? 'black' : 'red';
@@ -326,9 +327,7 @@ function addEventListeners(Board) {
                     }
                 }
             } else if (Checkers[y][x]) {
-                let colour = Checkers[y][x].colour;
-                if ((turn === 'red' && colour === 'red') ||
-                (turn === 'black' && colour === 'black')) {
+                if (turn === Checkers[y][x].colour) { 
                     unselectTile(Board);
                     selectTile(Board, x, y);
                     clearValidMoves(Board);
