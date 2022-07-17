@@ -301,15 +301,13 @@ function addEventListeners(Board) {
                 movePiece(Board, x, y);
                 unselectTile(Board);
                 clearValidMoves(Board);
+                mustJump = false;
                 if (!justKinged && mustJump) {
                     findJumps(Board, x, y);
                     if (validMoves.length > 0) {
                         selectTile(Board, x, y);
-                    } else {
-                        mustJump = false;
+                        mustJump = true;
                     }
-                } else {
-                    mustJump = false;
                 }
                 
                 // Only run this in case there's no double jump
