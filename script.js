@@ -1,7 +1,9 @@
+// TODO add way to change amount of checker rows
+
 function createBoardArray() {
     // This is where all the game tile dom elements are saved
     const Board = [];
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < sizeY; i++) {
         Board.push([]);
     }
 
@@ -11,9 +13,9 @@ function createBoardArray() {
 function createCheckersArray() {
     // This array will keep track of checkers on Board
     const checkers = [];
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < sizeY; i++) {
         checkers.push([]);
-        for (let j = 0; j < 8; j++) {
+        for (let j = 0; j < sizeX; j++) {
             checkers[i].push(0);
         }
     }
@@ -30,10 +32,10 @@ function createChecker() {
 
 function createCheckerBoard(Board) {
     const boardDiv = document.querySelector('#board-div');
-    for (let y = 0; y < 8; y++) {
+    for (let y = 0; y < sizeY; y++) {
         const line = document.createElement('div');
         line.classList.add('line');
-        for (let x = 0; x < 8; x++) {
+        for (let x = 0; x < sizeX; x++) {
             const tile = document.createElement('div');
             tile.classList.add('tile');
             tile.dataset.x = x;
@@ -81,15 +83,15 @@ function placeChecker(Board, x, y, colour) {
 
 function placeCheckers(Board) {
     for (let y = 0; y < 3; y++) {
-        for (let x = 0; x < 8; x++) {
+        for (let x = 0; x < sizeX; x++) {
             if (Board[y][x].classList.contains('black')) {
                 placeChecker(Board, x, y, 'black')
             }
         }
     }
 
-    for (let y = 5; y < 8; y++) {
-        for (let x = 0; x < 8; x++) {
+    for (let y = sizeY - 3; y < sizeY; y++) {
+        for (let x = 0; x < sizeX; x++) {
             if (Board[y][x].classList.contains('black')) {
                 placeChecker(Board, x, y, 'red');
             }
@@ -148,8 +150,8 @@ function highlightValidMoves(Board) {
 }
 
 function moveAllowed(x, y, dirX, dirY) {
-    if (y + dirY < 8 && y + dirY >= 0) {
-        if (x + dirX < 8 && x + dirX >= 0) {
+    if (y + dirY < sizeY && y + dirY >= 0) {
+        if (x + dirX < sizeX && x + dirX >= 0) {
             if (!Checkers[y + dirY][x + dirX]) {
                 return true;
             }
@@ -184,8 +186,8 @@ function findJumps(Board, x, y) {
 }
 
 function checkIfJumpAvailable() {
-    for (let y = 0; y < 8; y++) {
-        for (let x = 0; x < 8; x++) {
+    for (let y = 0; y < sizeY; y++) {
+        for (let x = 0; x < sizeX; x++) {
             if (Checkers[y][x]) {
                 if (Checkers[y][x].colour === turn) {
                     if (turn === "red" || Checkers[y][x].king) {
@@ -211,8 +213,8 @@ function checkIfJumpAvailable() {
 }
 
 function checkForJump(x, y, dirX, dirY) {
-    if (y + dirY < 8 && y + dirY >= 0) {
-        if (x + dirX < 8 && x + dirX >= 0) {
+    if (y + dirY < sizeY && y + dirY >= 0) {
+        if (x + dirX < sizeX && x + dirX >= 0) {
             if (!Checkers[y + dirY][x + dirX])
             {   
                 return (Checkers[y + (dirY / 2)][x + (dirX / 2)] && 
@@ -260,7 +262,7 @@ function movePiece(Board, x, y) {
     justKinged = false;
     let colour = Checkers[y][x].colour;
     if (!Checkers[y][x].king) {
-        if ((colour === 'black' && y === 7) ||
+        if ((colour === 'black' && y === sizeY - 1) ||
         (colour === 'red' && y === 0)) {
             kingMe(Board, x, y);
         }
@@ -268,8 +270,8 @@ function movePiece(Board, x, y) {
 }
 
 function checkForWin(Board) {
-    for (let y = 0; y < 8; y++) {
-        for (let x = 0; x < 8; x++) {
+    for (let y = 0; y < sizeY; y++) {
+        for (let x = 0; x < sizeX; x++) {
             if (Checkers[y][x]) {
                 if (Checkers[y][x].colour === turn) {
                     findValidMoves(x, y);
@@ -350,6 +352,8 @@ function startGame() {
     addEventListeners(Board);
 }
 
+const sizeY = 10;
+const sizeX= 20;
 let turn = 'red';
 let mustJump = false;
 let justKinged = false;
