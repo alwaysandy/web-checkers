@@ -251,13 +251,11 @@ function movePiece(Board, x, y) {
 function checkForWin(Board) {
     for (let y = 0; y < sizeY; y++) {
         for (let x = 0; x < sizeX; x++) {
-            if (Checkers[y][x]) {
-                if (Checkers[y][x].colour === turn) {
-                    findValidMoves(x, y);
-                    if (validMoves.length > 0) {
-                        clearValidMoves(Board);
-                        return false;
-                    }
+            if (Checkers[y][x] && Checkers[y][x].colour === turn) {
+                findValidMoves(x, y);
+                if (validMoves.length > 0) {
+                    clearValidMoves(Board);
+                    return false;
                 }
             }
         }
@@ -325,7 +323,7 @@ function addEventListeners(Board) {
 function changeSize() {
     let x, y, rows;
     while(true) {
-        y = prompt("How many tiles tall should the board be?");
+        y = parseInt(prompt("How many tiles tall should the board be?"));
         if (isNaN(y) || y < 3) {
             alert("Height value must be an integer >= 3");
         } else {
@@ -335,7 +333,7 @@ function changeSize() {
     }
 
     while(true) {
-        x = prompt("How many tiles wide should the board be?")
+        x = parseInt(prompt("How many tiles wide should the board be?"))
         if (isNaN(x) || x < 3) {
             alert("Width value must be an integer >= 3");
         } else {
@@ -345,9 +343,11 @@ function changeSize() {
     }
     
     while(true) {
-        rows = prompt("How many rows of checkers per side?");
+        rows = parseInt(prompt("How many rows of checkers per side?"));
         if (isNaN(rows) || rows < 1) {
             alert("Number of checker rows must be an integer >= 1");
+        } else if (rows >= (sizeY / 2)){
+            alert("Too many rows of checkers for size of board.")
         } else {
             checkerRows = rows;
             break;
@@ -381,7 +381,6 @@ function startGame() {
     createCheckerBoard(Board);
     placeCheckers(Board);
     if (checkerRows >= sizeY / 2) {
-        alert("WARNING, TOO MANY CHECKER ROWS FOR SIZE OF BOARD");
     }
 
     addEventListeners(Board);
