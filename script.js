@@ -139,12 +139,6 @@ function findValidMoves(x, y) {
     }
 }
 
-function highlightValidMoves(Board) {
-    for (let move of validMoves) {
-        Board[move[1]][move[0]].classList.add('highlighted');
-    }
-}
-
 function moveAllowed(x, y, dirX, dirY) {
     if (y + dirY < sizeY && y + dirY >= 0) {
         if (x + dirX < sizeX && x + dirX >= 0) {
@@ -152,6 +146,12 @@ function moveAllowed(x, y, dirX, dirY) {
                 return true;
             }
         }
+    }
+}
+
+function highlightValidMoves(Board) {
+    for (let move of validMoves) {
+        Board[move[1]][move[0]].classList.add('highlighted');
     }
 }
 
@@ -175,10 +175,6 @@ function findJumps(Board, x, y) {
             validMoves.push([x - 2, y + 2]);
         }
     }
-
-    for (let move of validMoves) {
-        Board[move[1]][move[0]].classList.add('highlighted');
-    }
 }
 
 function checkIfJumpAvailable() {
@@ -189,14 +185,12 @@ function checkIfJumpAvailable() {
                     if (turn === "red" || Checkers[y][x].king) {
                         if (checkForJump(x, y, 2, -2) ||
                         checkForJump(x, y, -2, -2)) {
-                            mustJump = true;
                             return true;
                         }
                     }
                     if (turn === "black" || Checkers[y][x].king) {
                         if (checkForJump(x, y, -2, 2) ||
                         checkForJump(x, y, 2, 2)) {
-                            mustJump = true;
                             return true;
                         }
                     }
@@ -224,6 +218,14 @@ function checkForJump(x, y, dirX, dirY) {
                 }*/
             }
         }
+    }
+}
+
+function highlightJumps() {
+    if (validMoves.length > 0) {
+        for (let move of validMoves) {
+            Board[move[1]][move[0]].classList.add('highlighted');
+        }    
     }
 }
 
@@ -302,6 +304,7 @@ function addEventListeners(Board) {
                 mustJump = false;
                 if (!justKinged && mustJump) {
                     findJumps(Board, x, y);
+                    highlightJumps();
                     if (validMoves.length > 0) {
                         selectTile(Board, x, y);
                         mustJump = true;
@@ -311,12 +314,11 @@ function addEventListeners(Board) {
                 // Only run this in case there's no double jump
                 if (!mustJump) {
                     turn = turn === 'red' ? 'black' : 'red';
-                    if (!checkIfJumpAvailable(Board)) {
-                        // checkForWin just checks whether there's an available move to make
-                        if (checkForWin(Board)) {
-                            turn = turn === 'red' ? 'BLACK' : 'RED';
-                            alert(`WINNER WINNER CHICKEN DINNER ${turn} WINS`);
-                        }
+                    if (checkIfJumpAvailable(Board)) {
+                        mustJump = true;
+                    } else if (checkForWin(Board)) {
+                        turn = turn === 'red' ? 'BLACK' : 'RED';
+                        alert(`WINNER WINNER CHICKEN DINNER ${turn} WINS`);
                     }
                 }
             } else if (Checkers[y][x]) {
@@ -326,6 +328,7 @@ function addEventListeners(Board) {
                     clearValidMoves(Board);
                     if(mustJump) {
                         findJumps(Board, x, y);
+                        highlightJumps();
                     } else {
                         findValidMoves(x, y);
                         highlightValidMoves(Board);
