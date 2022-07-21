@@ -367,11 +367,11 @@ function startGame() {
 }
 
 // Height of board
-let sizeY = 3;
+let sizeY = 8;
 // Width of board
-let sizeX = 3;
+let sizeX = 8;
 //Amount of initial rows of checkers
-let checkerRows = 1;
+let checkerRows = 3;
 
 let turn = 'red';
 let mustJump = false;
@@ -380,7 +380,6 @@ let Board = createBoardArray();
 let Checkers = createCheckersArray();
 let selectedTile = [-1, -1];
 let validMoves = [];
-
 
 const resetButton = document.querySelector("#reset");
 resetButton.addEventListener("click", resetGame);
