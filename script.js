@@ -1,5 +1,3 @@
-// TODO add way to change amount of checker rows
-
 function createBoardArray() {
     // This is where all the game tile dom elements are saved
     const Board = [];
@@ -287,11 +285,11 @@ function addEventListeners(Board) {
                 if (!justKinged && mustJump) {
                     findJumps(x, y);
                     highlightJumps();
-                    if (validMoves.length > 0) {
-                        selectTile(Board, x, y);
-                    } else {
-                        mustJump = false;
-                    }
+                }
+
+                // There will only be a valid move if there's a double jump
+                if (validMoves.length > 0) {
+                    selectTile(Board, x, y);
                 } else {
                     mustJump = false;
                 }
