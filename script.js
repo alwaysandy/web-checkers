@@ -380,9 +380,6 @@ function resetGame() {
 function startGame() {
     createCheckerBoard(Board);
     placeCheckers(Board);
-    if (checkerRows >= sizeY / 2) {
-    }
-
     addEventListeners(Board);
 }
 
