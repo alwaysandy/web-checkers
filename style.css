@@ -4,6 +4,12 @@
     box-sizing: border-box;
 }
 
+#title {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font-weight: normal;
+    font-size: 2.5rem;
+}
+
 .game-container {
     width: 100vw;
     height: 100vh;

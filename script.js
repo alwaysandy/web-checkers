@@ -23,13 +23,6 @@ function createCheckersArray() {
     return checkers;
 }
 
-function createChecker(colour) {
-    return {
-        colour: colour,
-        king: false,
-    };
-}
-
 function createCheckerBoard(Board) {
     const boardDiv = document.querySelector('#board-div');
     for (let y = 0; y < sizeY; y++) {
@@ -76,12 +69,16 @@ function placeChecker(Board, x, y, colour) {
     checker.dataset.y = y;
     Board[y][x].appendChild(checker);
 
-    let checkerData = createChecker(colour);
+    let checkerData = {
+        colour: colour,
+        king: false,
+    }
+
     Checkers[y][x] = checkerData;
 }
 
 function placeCheckers(Board) {
-    for (let y = 0; y < rows; y++) {
+    for (let y = 0; y < CHECKERROWS; y++) {
         for (let x = 0; x < sizeX; x++) {
             if (Board[y][x].classList.contains('black')) {
                 placeChecker(Board, x, y, 'black')
@@ -89,7 +86,7 @@ function placeCheckers(Board) {
         }
     }
 
-    for (let y = sizeY - rows; y < sizeY; y++) {
+    for (let y = sizeY - CHECKERROWS; y < sizeY; y++) {
         for (let x = 0; x < sizeX; x++) {
             if (Board[y][x].classList.contains('black')) {
                 placeChecker(Board, x, y, 'red');
@@ -343,11 +340,10 @@ function startGame() {
     const Board = createBoardArray();
     createCheckerBoard(Board);
     placeCheckers(Board);
-    // placeChecker(Board, 1, 2, 'red');
-    // Checkers[2][1].king = true;
-    // placeChecker(Board, 2, 1, 'black');
-    // placeChecker(Board, 4, 1, 'black');
-    // placeChecker(Board, 5, 6, 'black');
+    if (CHECKERROWS >= sizeY / 2) {
+        alert("WARNING, TOO MANY CHECKER ROWS FOR SIZE OF BOARD");
+    }
+
     addEventListeners(Board);
 }
 
@@ -356,11 +352,7 @@ const sizeY = 8;
 // Width of board
 const sizeX = 8;
 //Amount of initial rows of checkers
-const rows = 3;
-
-if (rows >= sizeY / 2) {
-    alert("WARNING, TOO MANY CHECKER ROWS FOR SIZE OF BOARD");
-}
+const CHECKERROWS = 3;
 
 let turn = 'red';
 let mustJump = false;
