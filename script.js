@@ -78,7 +78,7 @@ function placeChecker(Board, x, y, colour) {
 }
 
 function placeCheckers(Board) {
-    for (let y = 0; y < CHECKERROWS; y++) {
+    for (let y = 0; y < checkerRows; y++) {
         for (let x = 0; x < sizeX; x++) {
             if (Board[y][x].classList.contains('black')) {
                 placeChecker(Board, x, y, 'black')
@@ -86,7 +86,7 @@ function placeCheckers(Board) {
         }
     }
 
-    for (let y = sizeY - CHECKERROWS; y < sizeY; y++) {
+    for (let y = sizeY - checkerRows; y < sizeY; y++) {
         for (let x = 0; x < sizeX; x++) {
             if (Board[y][x].classList.contains('black')) {
                 placeChecker(Board, x, y, 'red');
@@ -340,7 +340,7 @@ function startGame() {
     const Board = createBoardArray();
     createCheckerBoard(Board);
     placeCheckers(Board);
-    if (CHECKERROWS >= sizeY / 2) {
+    if (checkerRows >= sizeY / 2) {
         alert("WARNING, TOO MANY CHECKER ROWS FOR SIZE OF BOARD");
     }
 
@@ -352,7 +352,7 @@ const sizeY = 8;
 // Width of board
 const sizeX = 8;
 //Amount of initial rows of checkers
-const CHECKERROWS = 3;
+const checkerRows = 3;
 
 let turn = 'red';
 let mustJump = false;
