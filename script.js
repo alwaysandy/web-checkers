@@ -336,9 +336,44 @@ function addEventListeners(Board) {
     });
 }
 
+function changeSize() {
+    let x, y, rows;
+    while(true) {
+        y = prompt("How many tiles tall should the board be?");
+        if (isNaN(y) || y < 3) {
+            alert("Height value must be an integer >= 3");
+        } else {
+            sizeY = y;
+            break;
+        }
+    }
+
+    while(true) {
+        x = prompt("How many tiles wide should the board be?")
+        if (isNaN(x) || x < 3) {
+            alert("Width value must be an integer >= 3");
+        } else {
+            sizeX = x;
+            break;
+        }
+    }
+    
+    while(true) {
+        rows = prompt("How many rows of checkers per side?");
+        if (isNaN(rows) || rows < 1) {
+            alert("Number of checker rows must be an integer >= 1");
+        } else {
+            checkerRows = rows;
+            break;
+        }
+    }
+
+    resetGame();
+}
+
 function resetGame() {
-    for (let y = 0; y < sizeY; y++) {
-        for (let x = 0; x < sizeX; x++) {
+    for (let y = 0; y < Board.length; y++) {
+        for (let x = 0; x < Board[0].length; x++) {
             if (Board[y][x].hasChildNodes()) {
                 Board[y][x].firstChild.remove();
             }
@@ -383,4 +418,8 @@ let validMoves = [];
 
 const resetButton = document.querySelector("#reset");
 resetButton.addEventListener("click", resetGame);
+
+const sizeButton = document.querySelector("#size");
+sizeButton.addEventListener("click", changeSize);
+
 startGame();
