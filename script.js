@@ -336,8 +336,27 @@ function addEventListeners(Board) {
     });
 }
 
+function resetGame() {
+    for (let y = 0; y < sizeY; y++) {
+        for (let x = 0; x < sizeX; x++) {
+            if (Board[y][x].hasChildNodes()) {
+                Board[y][x].firstChild.remove();
+            }
+            Board[y][x].remove();
+        }
+    }
+
+    turn = "red";
+    mustJump = false;
+    justKinged = false;
+    validMoves = [];
+    selectedTile = [-1, -1];
+    Board = createBoardArray();
+    Checkers = createCheckersArray();
+    startGame(Board);
+}
+
 function startGame() {
-    const Board = createBoardArray();
     createCheckerBoard(Board);
     placeCheckers(Board);
     if (checkerRows >= sizeY / 2) {
@@ -348,17 +367,21 @@ function startGame() {
 }
 
 // Height of board
-const sizeY = 8;
+let sizeY = 3;
 // Width of board
-const sizeX = 8;
+let sizeX = 3;
 //Amount of initial rows of checkers
-const checkerRows = 3;
+let checkerRows = 1;
 
 let turn = 'red';
 let mustJump = false;
 let justKinged = false;
-const Checkers = createCheckersArray();
-const selectedTile = [-1, -1];
+let Board = createBoardArray();
+let Checkers = createCheckersArray();
+let selectedTile = [-1, -1];
 let validMoves = [];
 
+
+const resetButton = document.querySelector("#reset");
+resetButton.addEventListener("click", resetGame);
 startGame();
