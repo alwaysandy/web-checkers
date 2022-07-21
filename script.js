@@ -54,7 +54,7 @@ function createCheckerBoard(Board) {
     }
 }
 
-function placeChecker(Board, x, y, colour) {
+function createChecker(x, y, colour) {
     let checker = document.createElement('div')
     checker.classList.add('checker');
     if (colour === 'red') {
@@ -65,7 +65,6 @@ function placeChecker(Board, x, y, colour) {
     
     checker.dataset.x = x;
     checker.dataset.y = y;
-    Board[y][x].appendChild(checker);
 
     let checkerData = {
         colour: colour,
@@ -73,13 +72,17 @@ function placeChecker(Board, x, y, colour) {
     }
 
     Checkers[y][x] = checkerData;
+    
+    return checker;
 }
 
 function placeCheckers(Board) {
+    let checker;
     for (let y = 0; y < checkerRows; y++) {
         for (let x = 0; x < sizeX; x++) {
             if (Board[y][x].classList.contains('black')) {
-                placeChecker(Board, x, y, 'black')
+                checker = createChecker(x, y, 'black')
+                Board[y][x].appendChild(checker);
             }
         }
     }
@@ -87,7 +90,8 @@ function placeCheckers(Board) {
     for (let y = sizeY - checkerRows; y < sizeY; y++) {
         for (let x = 0; x < sizeX; x++) {
             if (Board[y][x].classList.contains('black')) {
-                placeChecker(Board, x, y, 'red');
+                checker = createChecker(x, y, 'red');
+                Board[y][x].appendChild(checker);
             }
         }
     }
